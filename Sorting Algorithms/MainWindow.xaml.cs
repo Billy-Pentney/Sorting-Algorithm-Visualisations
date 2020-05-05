@@ -39,7 +39,6 @@ namespace Sorting_Algorithms
 
         int compareCount = 0;
         int swapCount = 0;
-
         int SortType = 0;
 
         int IndexToInsert = 0;
