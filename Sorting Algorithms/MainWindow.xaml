@@ -17,5 +17,8 @@
         <Button Name="StopBtn" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="10" Canvas.Top="10" Height="25" Width="100" Click="StopBtn_Click"></Button>
         <Label Name="ComparesLbl" Content="Comparisons: " Canvas.Right="200" Canvas.Top="10"></Label>
         <Label Name="SwapsLbl" Content="Swaps: " Canvas.Right="200" Canvas.Top="35"></Label>
+
+        <Label Name="CountLbl" Content="Elements: " Canvas.Left="110" Canvas.Top="30" Margin="10"></Label>
+        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="225" Margin="10" Height="25" Width="100" Value="40" ValueChanged="BarCount_ValueChanged"></Slider>
     </Canvas>
 </Window>

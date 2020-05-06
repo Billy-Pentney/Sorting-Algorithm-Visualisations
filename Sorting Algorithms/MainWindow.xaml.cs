@@ -19,6 +19,8 @@ using System.Resources;
 namespace Sorting_Algorithms
 {
 
+    enum SortAlgs { Bubble, Insert, Select, BinIns};
+
     public partial class MainWindow : Window
     {
         double[] array;     //actual data being sorted
@@ -34,33 +36,54 @@ namespace Sorting_Algorithms
         const int minHeight = 50;
         int maxHeight;
 
+        int numOfElements = 200;
+
         double LeftIndent = 100;
         double TopIndent = 150;
 
         int compareCount = 0;
         int swapCount = 0;
-        int SortType = 0;
 
         int IndexToInsert = 0;
+
+        SortAlgs runningAlgorithm;
+        //represents which algorithm is currently being performed
 
         public MainWindow()
         {
             InitializeComponent();
 
-            maxHeight = (int)(this.Height - TopIndent);
+            maxHeight = (int)(this.Height - TopIndent) - 50;
+            //maximum height for the bars
 
+            BarCount.Value = 50;
             timer.Interval = new TimeSpan(0, 0, 0, 0, thickness);
-            array = new double[(int)(this.Width - 2 * LeftIndent) / thickness];
-            Lines = new Line[array.Length];
 
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = rand.NextDouble() * maxHeight + 50;
+            #region Old Initialisation of Array and lines
 
-                Lines[i] = new Line();
+            //now carried out by BarCount Slider
 
-                myCanvas.Children.Add(Lines[i]);
-            }
+            //array = new double[numOfElements];
+            //CountLbl.Content = "Elements: " + numOfElements;
+
+            //thickness = (int)((this.Width - 2 * LeftIndent) / array.Length);
+            ////determines thickness of bars by dividing the available space by the number of bars
+
+            //timer.Interval = new TimeSpan(0, 0, 0, 0, thickness);
+            ////thinner the bars, the more to sort, so the timer is faster
+
+            //Lines = new Line[array.Length];
+
+            //for (int i = 0; i < array.Length; i++)
+            //{
+            //    array[i] = rand.NextDouble() * maxHeight + 50;
+            //    //randomly assigns values to each index
+
+            //    Lines[i] = new Line();
+
+            //    myCanvas.Children.Add(Lines[i]);
+            //}
+            #endregion
 
             Shuffle();
             timer.Tick += Timer_Tick;
@@ -75,6 +98,7 @@ namespace Sorting_Algorithms
             else
             {
                 Stop();
+                Draw(-1, -1);
             }
         }
 
@@ -82,18 +106,18 @@ namespace Sorting_Algorithms
         {
             //applies the correct sort based on the button clicked
 
-            switch (SortType)
+            switch (runningAlgorithm)
             {
-                case 0:
+                case SortAlgs.Bubble:
                     BubbleSort();
                     break;
-                case 1:
+                case SortAlgs.Insert:
                     InsertionSort();
                     break;
-                case 2:
+                case SortAlgs.Select:
                     SelectionSort();
                     break;
-                case 3:
+                case SortAlgs.BinIns:
                     BinaryInsertSort();
                     break;
                 default:
@@ -142,7 +166,6 @@ namespace Sorting_Algorithms
                 Lines[i].Y1 = this.Height - 40;
                 Lines[i].Y2 = Lines[i].Y1 - array[i];
                 Lines[i].Stroke = colour;
-                Lines[i].StrokeThickness = thickness;
             }
         }
 
@@ -236,7 +259,6 @@ namespace Sorting_Algorithms
             {
                 IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
                 SortJ = SortI - 1;
-
             }
 
             /////Old Version - much faster since whole for loop completed per tick
@@ -260,7 +282,6 @@ namespace Sorting_Algorithms
 
             Draw(SortI, SortJ + 1);
             UpdateInfoLabels();
-
         }
 
         public int BinarySearchForSpace(int toInsert, int min, int max)
@@ -325,7 +346,8 @@ namespace Sorting_Algorithms
 
             EnableSortButtons(false);
 
-            SortType = 0;
+            runningAlgorithm = SortAlgs.Bubble;
+
             timer.Start();    
         }
 
@@ -337,7 +359,8 @@ namespace Sorting_Algorithms
 
             EnableSortButtons(false);
 
-            SortType = 1;
+            runningAlgorithm = SortAlgs.Insert;
+
             timer.Start();
         }
 
@@ -348,7 +371,7 @@ namespace Sorting_Algorithms
             ResetLabels();
             EnableSortButtons(false);
 
-            SortType = 2;
+            runningAlgorithm = SortAlgs.Select;
 
             minIndex = SortI;
             SortJ = minIndex + 1;
@@ -363,12 +386,14 @@ namespace Sorting_Algorithms
             ResetLabels();
             EnableSortButtons(false);
 
-            SortType = 3;
+            runningAlgorithm = SortAlgs.BinIns;
+
+            //if this breaks, use SortI=0, and IndexToInsert=SortI;
 
             SortI = 1;
             SortJ = SortI - 1;
 
-            IndexToInsert = SortI;
+            IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
 
             timer.Start();
         }
@@ -419,6 +444,60 @@ namespace Sorting_Algorithms
 
             SortI = 0;
             SortJ = 0;
+        }
+
+        private void BarCount_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            numOfElements = (int)BarCount.Value;
+            CountLbl.Content = "Elements: " + numOfElements;
+
+            InitialiseBarsAndLines();
+        }
+
+        private void InitialiseBarsAndLines()
+        {
+            array = new double[numOfElements];
+            //creates array to store values to be sorted
+
+            if (Lines != null)
+            {
+                //if lines exists, remove them from the canvas
+
+                for (int i = 0; i < Lines.Length; i++)
+                {
+                    myCanvas.Children.Remove(Lines[i]);
+                }
+            }
+
+            Lines = new Line[numOfElements];
+            //creates array of lines to represent the array values
+
+            thickness = (int)((this.Width - 2 * LeftIndent) / numOfElements);
+            //thickness inverself proportional to the number of bars
+
+            //timer.Interval = new TimeSpan(0, 0, 0, 0, thickness);
+
+            for (int i = 0; i < Lines.Length; i++)
+            {
+                Lines[i] = new Line();
+
+                Lines[i].StrokeThickness = thickness;
+
+                myCanvas.Children.Add(Lines[i]);
+            }
+
+            RandomlyAssignArrayValues();
+            Draw(-1, -1);
+        }
+
+        private void RandomlyAssignArrayValues()
+        {
+            //gives each instance a random double between 50 and maxHeight + 50
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = rand.NextDouble() * maxHeight + 50;
+            }
         }
     }
 }
