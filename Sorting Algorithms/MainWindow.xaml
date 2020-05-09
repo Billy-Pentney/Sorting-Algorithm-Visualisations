@@ -11,14 +11,16 @@
         <Button Name="InsertBtn" Content="Insertion Sort" Margin="10" Canvas.Top="30" Width="100" Height="25" Click="InsertBtn_Click"></Button>
         <Button Name="SelectBtn" Content="Selection Sort" Margin="10" Canvas.Top="60" Width="100" Height="25" Click="SelectBtn_Click"></Button>
         <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="10" Canvas.Top="90" Width="100" Height="25" Click="BinaryInsertBtn_Click"></Button>
+        <Button Name="QuickBtn" Content="Quick Sort" Margin="10" Canvas.Top="120" Width="100" Height="25" Click="QuickBtn_Click"></Button>
 
 
         <Button Name="ShuffleBtn" Content="Shuffle" Canvas.Left="110" Height="25" Margin="10" Width="100" Click="ShuffleBtn_Click"></Button>
         <Button Name="StopBtn" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="10" Canvas.Top="10" Height="25" Width="100" Click="StopBtn_Click"></Button>
-        <Label Name="ComparesLbl" Content="Comparisons: " Canvas.Right="200" Canvas.Top="10"></Label>
-        <Label Name="SwapsLbl" Content="Swaps: " Canvas.Right="200" Canvas.Top="35"></Label>
+        <Label Name="ComparesLbl" Content="Comparisons: " Canvas.Right="180" Canvas.Top="10"></Label>
+        <Label Name="SwapsLbl" Content="Swaps: " Canvas.Right="180" Canvas.Top="35"></Label>
 
         <Label Name="CountLbl" Content="Elements: " Canvas.Left="110" Canvas.Top="30" Margin="10"></Label>
-        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="225" Margin="10" Height="25" Width="100" Value="40" ValueChanged="BarCount_ValueChanged"></Slider>
+        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="225" Margin="10" Height="25" Width="300" Value="40" ValueChanged="BarCount_ValueChanged"></Slider>
+        <Label Name="TimeLbl" Content="Time Elapsed: " Canvas.Left="110" Canvas.Top="60" Margin="10"></Label>
     </Canvas>
 </Window>
