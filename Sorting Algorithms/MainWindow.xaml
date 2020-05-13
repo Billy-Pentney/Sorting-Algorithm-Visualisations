@@ -8,19 +8,29 @@
         Title="MainWindow" Height="550" Width="1000" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Canvas Name="myCanvas">
         <Button Name="BubbleBtn" Content="Bubble Sort" Margin="10" Width="100" Height="25" Click="BubbleBtn_Click"></Button>
-        <Button Name="InsertBtn" Content="Insertion Sort" Margin="10" Canvas.Top="30" Width="100" Height="25" Click="InsertBtn_Click"></Button>
-        <Button Name="SelectBtn" Content="Selection Sort" Margin="10" Canvas.Top="60" Width="100" Height="25" Click="SelectBtn_Click"></Button>
-        <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="10" Canvas.Top="90" Width="100" Height="25" Click="BinaryInsertBtn_Click"></Button>
-        <Button Name="QuickBtn" Content="Quick Sort" Margin="10" Canvas.Top="120" Width="100" Height="25" Click="QuickBtn_Click"></Button>
+        <Button Name="CocktailBtn" Content="Cocktail Shaker" Canvas.Top="30" Margin="10" Width="100" Height="25" Click="CocktailBtn_Click"></Button>
+        <Button Name="CombBtn" Content="Comb Sort" Margin="10" Canvas.Top="60" Width="100" Height="25" Click="CombBtn_Click"></Button>
 
+        <Button Name="InsertBtn" Content="Insertion Sort" Margin="10" Canvas.Top="90" Width="100" Height="25" Click="InsertBtn_Click"></Button>
+        <Button Name="ShellBtn" Content="Shell Sort" Margin="10" Canvas.Top="120" Width="100" Height="25" Click="ShellBtn_Click"></Button>
+        <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="10" Canvas.Top="150" Width="100" Height="25" Click="BinaryInsertBtn_Click"></Button>
+
+        <Button Name="SelectBtn" Content="Selection Sort" Margin="10" Canvas.Top="180" Width="100" Height="25" Click="SelectBtn_Click"></Button>
+        <Button Name="QuickLomutoBtn" Content="Quick (Lomuto)" Margin="10" Canvas.Top="210" Width="100" Height="25" Click="QuickLomutoBtn_Click"></Button>
+        <Button Name="QuickHoareBtn" Content="Quick (Hoare)" Margin="10" Canvas.Top="270" Width="100" Height="25" Click="QuickHoareBtn_Click"></Button>
+        <Button Name="QuickLomutoMedianBtn" Content="Quick (Median)" Margin="10" Canvas.Top="240" Width="100" Height="25" Click="QuickLomutoMedianBtn_Click"></Button>
 
         <Button Name="ShuffleBtn" Content="Shuffle" Canvas.Left="110" Height="25" Margin="10" Width="100" Click="ShuffleBtn_Click"></Button>
+        <Button Name="ReverseBtn" Content="Reverse Order" Canvas.Left="110" Canvas.Top="30" Height="25" Margin="10" Width="100" Click="ReverseBtn_Click"></Button>
+
+        <CheckBox Name="RandomValueCheck" Content="Random Values" Canvas.Left="240" Canvas.Top="45" Checked="RandomValueCheck_Checked" Unchecked="RandomValueCheck_Checked"></CheckBox>
+        
         <Button Name="StopBtn" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="10" Canvas.Top="10" Height="25" Width="100" Click="StopBtn_Click"></Button>
         <Label Name="ComparesLbl" Content="Comparisons: " Canvas.Right="180" Canvas.Top="10"></Label>
         <Label Name="SwapsLbl" Content="Swaps: " Canvas.Right="180" Canvas.Top="35"></Label>
 
-        <Label Name="CountLbl" Content="Elements: " Canvas.Left="110" Canvas.Top="30" Margin="10"></Label>
-        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="225" Margin="10" Height="25" Width="300" Value="40" ValueChanged="BarCount_ValueChanged"></Slider>
-        <Label Name="TimeLbl" Content="Time Elapsed: " Canvas.Left="110" Canvas.Top="60" Margin="10"></Label>
+        <Label Name="CountLbl" Content="Elements: " Canvas.Left="225" Margin="10"></Label>
+        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="325" Margin="10" Height="25" Canvas.Top="3" Width="300" Value="40" ValueChanged="BarCount_ValueChanged" VerticalContentAlignment="Center"></Slider>
+        <Label Name="TimeLbl" Content="Time Elapsed: " Canvas.Left="110" Canvas.Top="60" Margin="10" Visibility="Hidden"></Label>
     </Canvas>
 </Window>

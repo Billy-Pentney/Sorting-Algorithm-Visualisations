@@ -17,63 +17,79 @@ using System.Resources;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Animation;
+using System.Globalization;
 
 namespace Sorting_Algorithms
 {
-    enum SortAlgs { Bubble, Insert, Select, BinaryInsert, Quick};
+    enum SortAlgs { Bubble, CocktailShaker, Comb, Insertion, Selection, BinaryInsertion, QuickLomuto, QuickHoare, QuickLomutoMedian, Shell};
 
     public partial class MainWindow : Window
     {
-        SolidColorBrush red = new SolidColorBrush(Color.FromRgb((byte)255, (byte)100, (byte)100));
-        SolidColorBrush blue = new SolidColorBrush(Color.FromRgb((byte)100, (byte)100, (byte)255));
+        SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 100, 100));
+        SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(100, 100, 255));
+        SolidColorBrush dblue = new SolidColorBrush(Color.FromRgb(175, 150, 255));
 
-        double[] array;     //actual data being sorted
-        Line[] Lines;   //array of visual lines to represent data values
+        bool fillGap = false;
+
+        double[] array;                                             //actual data being sorted
+        Line[] Lines;                                               //array of visual bars to represent data values
+
         Random rand = new Random();
-        int thickness = 20;
-        DispatcherTimer SortTimer = new DispatcherTimer();
+        int thickness = 20;                                         //width of each bar
+        DispatcherTimer SortTimer = new DispatcherTimer();          //timer to control when the sort algorithm increments and the display is updated
 
-        int SortI = 0;
-        int SortJ = 0;
-        int minIndex = -1;
+        int SortI = 0;                                              //main loop - usually when this reaches array.length, the sort is finished      (e.g. BUBBLE)
+        int SortJ = 0;                                              //inner loop - usually when this reaches array.length, SortI++                  (e.g. BUBBLE)
 
-        const int minHeight = 20;
-        int maxHeight;
+        int minIndex = -1;                                          //stores the index of the smallest found element on this pass (SELECTION)
 
-        int numOfElements = 200;
+        const int minHeight = 2;                                    //minimum height of the bars
+        int maxHeight;                                              //maximum height of the bars - dependent on window size
 
-        double LeftIndent = 100;
-        double TopIndent = 150;
+        int numOfElements = 200;                                    //number of values/lines to sort
 
-        int compareCount = 0;
-        int swapCount = 0;
+        double LeftIndent = 100;                                    //how far from the left side of the window to the left-most bar
+        double TopIndent = 100;                                     //how far from the top side of the window to the top of the highest possible bar
 
-        int IndexToInsert = 0;
+        int compareCount = 0;                                       //number of comparisons made between elements in the array per sort
+        int swapCount = 0;                                          //number of times Swap() is called per sort
 
-        Queue<int[]> QuickSortsToPerform = new Queue<int[]>();
+        int IndexToInsert = 0;                                      //the index to be inserted at its correct location in the array (INSERTION)
 
-        int currentEnd = 0;
-        int currentStart = 0;
-        int pivotIndex = 0;
-        double pivotValue = 0;
+                                                                    //QUICK SORT//
+        Queue<int[]> QuickSortsToPerform = new Queue<int[]>();      //stores all pairs of values for which QuickSort still needs to be performed - if empty, the data is sorted
+
+        int currentEnd = 0;                                         //end of the current selection in QuickSort
+        int currentStart = 0;                                       //start of the current selection in QuickSort
+        int pivotIndex = 0;                                         //current index being compared to pivotValue in QuickSort
+        double pivotValue = 0;                                      //pivot point for the current QuickSort
+                                                                    // END //
+
+        SortAlgs runningAlgorithm;                                  //Enum represents which algorithm is currently being performed
+
+        int gap = 0;                                                //the gap between comparisons for Cocktail Shaker / Comb / Shell
+        const double comb_K = 1.3;                                  //the ratio used in the Comb Sort to reduce gap
+        int maxIndex;                                               //the highest value which SortJ must not exceed in Comb Sort, before the next iteration
+        bool swappedThisCycle = false;                              //allows algorithm to early exit if no swaps performed on this pass (for Bubble / Cocktail / Comb / Selection) 
 
         double time = 0;
-        //time since sort started in milliseconds
-        double interval;
-        //time interval for timer.tick in milliseconds
-
-        SortAlgs runningAlgorithm;
-        //represents which algorithm is currently being performed
 
         public MainWindow()
         {
             InitializeComponent();
 
-            maxHeight = (int)(this.Height - TopIndent) - 50;
+            BitmapImage iconSrc = new BitmapImage();
+            iconSrc.BeginInit();
+            iconSrc.UriSource = new Uri(Environment.CurrentDirectory + "/icon.png");
+            iconSrc.EndInit();
+
+            this.Icon = iconSrc;
+
+            maxHeight = (int)(this.Height - TopIndent);
             //maximum height for the bars
 
             BarCount.Value = 50;
-            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, thickness);
+            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 15);
 
             Shuffle();
             SortTimer.Tick += SortTimer_Tick;
@@ -82,37 +98,51 @@ namespace Sorting_Algorithms
         private void SortTimer_Tick(object sender, EventArgs e)
         {
             IterateSort();
-            //time += interval;
-            //UpdateInfoLabels();
+            UpdateInfoLabels();
         }
 
-        public void IterateSort()
+        private void IterateSort()
         {
-            //applies the correct sort based on the button clicked
+            //applies the correct sort algorithm based on the button initially clicked
 
             switch (runningAlgorithm)
             {
                 case SortAlgs.Bubble:
                     BubbleSort();
                     break;
-                case SortAlgs.Insert:
+                case SortAlgs.CocktailShaker:
+                    CocktailShakerSort();
+                    break;
+                case SortAlgs.Comb:
+                    CombSort();
+                    break;
+                case SortAlgs.Insertion:
                     InsertionSort();
                     break;
-                case SortAlgs.Select:
+                case SortAlgs.Selection:
                     SelectionSort();
                     break;
-                case SortAlgs.BinaryInsert:
+                case SortAlgs.BinaryInsertion:
                     BinaryInsertSort();
                     break;
-                case SortAlgs.Quick:
-                    QuickSort();
+                case SortAlgs.QuickLomuto:
+                    QuickSort_Lomuto();
+                    break;
+                case SortAlgs.QuickLomutoMedian:
+                    QuickSort_Lomuto();
+                    break;
+                case SortAlgs.QuickHoare:
+                    QuickSort_Hoare();
+                    break;
+                case SortAlgs.Shell:
+                    ShellSort();
                     break;
                 default:
                     break;
             }
         }
 
-        public void Draw(int iPos, int jPos)
+        private void Draw(int iPos, int jPos)
         {
             Brush colour;
 
@@ -126,20 +156,24 @@ namespace Sorting_Algorithms
                 {
                     colour = blue;
                 }
+                else if (fillGap && (i > iPos && i < jPos || i > jPos && i < iPos))
+                {
+                    colour = dblue;
+                }
                 else
                 {
                     colour = new SolidColorBrush(Color.FromArgb(255, (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height)));
                 }
 
-                Lines[i].X1 = i * thickness + 1.5 * LeftIndent;
+                Lines[i].X1 = i * thickness + 1.75 * LeftIndent;
                 Lines[i].X2 = Lines[i].X1;
-                Lines[i].Y1 = this.Height - 40;
+                Lines[i].Y1 = this.Height - 39;
                 Lines[i].Y2 = Lines[i].Y1 - array[i];
                 Lines[i].Stroke = colour;
             }
         }
 
-        public void Swap(int a, int b)
+        private void Swap(int a, int b)
         {
             //swaps array values and lines for indexes a and b in the respected arrays
 
@@ -154,9 +188,21 @@ namespace Sorting_Algorithms
             swapCount++;
         }
 
-        #region Bubble / Insertion / Selection
+        private void ReverseOrder()
+        {
+            //reverses the array, such that a sorted ascending array would become a sorted descending array
 
-        public void BubbleSort()
+            int num = array.Length - 1;
+            for (int i = 0; i < array.Length / 2; i++)
+            {
+                Swap(i, num - i);
+            }
+            Draw(-1, -1);
+        }
+
+        #region Bubble / Cocktail Shaker / Comb
+
+        private void BubbleSort()
         {
             //only checks those up to sortI to reduce wasted checks
 
@@ -165,6 +211,7 @@ namespace Sorting_Algorithms
                 if (array[SortJ] > array[SortJ + 1])
                 {
                     Swap(SortJ, SortJ + 1);
+                    swappedThisCycle = true;
                 }
 
                 compareCount++;
@@ -172,6 +219,12 @@ namespace Sorting_Algorithms
             }
             else
             {
+                if (!swappedThisCycle)
+                {
+                    SortI = array.Length;
+                }
+
+                swappedThisCycle = false;
                 SortJ = 0;
                 SortI++;
             }
@@ -188,7 +241,104 @@ namespace Sorting_Algorithms
             }
         }
 
-        public void InsertionSort()
+        private void CocktailShakerSort()
+        {
+            if (SortJ + gap < array.Length - (SortI) && SortJ + gap >= SortI)
+            {
+                if (gap * array[SortJ] > gap * array[SortJ + gap])
+                {
+                    Swap(SortJ, SortJ + gap);
+                    swappedThisCycle = true;
+                }
+
+                compareCount++;
+                SortJ += gap;
+            }
+            else if (SortI < array.Length - 1)
+            {
+                if (!swappedThisCycle)
+                {
+                    SortI = array.Length;
+                }
+
+                gap += gap * -2;
+                swappedThisCycle = false;
+
+                if (gap > 0)
+                {
+                    SortI++;
+                }
+            }
+            else
+            {
+                Stop();
+                gap = -1;
+                SortI = -1;
+                SortJ = -1;
+            }
+
+            if (gap > 0)
+            {
+                Draw(array.Length - SortI - 1, SortJ);
+            }
+            else
+            {
+                Draw(SortI, SortJ);
+            }
+
+            UpdateInfoLabels();
+        }
+
+        private void CombSort()
+        {
+            if (SortJ + gap < maxIndex)
+            {
+                if (array[SortJ] > array[SortJ + gap])
+                {
+                    Swap(SortJ, SortJ + gap);
+                    swappedThisCycle = true;
+                }
+
+                compareCount++;
+                SortJ += gap;
+            }
+            else if (SortI < array.Length)
+            {
+                if (gap > comb_K)
+                {
+                    gap = (int)(gap / comb_K);
+                    SortI = 0;
+                }
+                else if(!swappedThisCycle)
+                {
+                    SortI = array.Length;
+                }
+                else
+                {
+                    maxIndex = SortJ;
+                    SortI++;
+                }
+
+                swappedThisCycle = false;
+                SortJ = 0;
+            }
+            else
+            { 
+                Stop();
+                maxIndex = 0;
+                SortJ = -1;
+            }
+             
+            Draw(maxIndex - 1, SortJ);      
+
+            UpdateInfoLabels();
+        }
+
+        #endregion
+
+        #region Insertion / Shell / Binary Insertion
+
+        private void InsertionSort()
         {
             if (SortJ >= 0 && array[SortJ] > array[SortJ + 1])
             {
@@ -207,6 +357,7 @@ namespace Sorting_Algorithms
             if (SortI > array.Length - 1)
             {
                 Stop();
+                Draw(-1,-1);
             }
             else
             {
@@ -214,54 +365,48 @@ namespace Sorting_Algorithms
             }
         }
 
-        public void SelectionSort()
+        private void ShellSort()
         {
-            if (SortJ < array.Length && SortJ > minIndex)
+            if (SortJ >= 0 && array[SortJ] > array[SortJ + 1])
             {
-                //finds smallest instance in array
-
-                if (array[SortJ] < array[minIndex])
-                {
-                    minIndex = SortJ;
-                }
-
-                compareCount++;
-                SortJ++;
+                Swap(SortJ, SortJ + 1);
+                SortJ -= 1;
             }
-            else if (SortI < array.Length)
+            else if (SortI + gap < array.Length)
             {
-                Swap(SortI, minIndex);
-
-                SortI++;
-                minIndex = SortI;
-                SortJ = minIndex + 1;
+                SortI += gap;
+                SortJ = SortI - 1;
             }
-
-            UpdateInfoLabels();
-
-            if (SortI > array.Length - 1)
+            else if (gap > 1)
             {
-                Stop();
-                Draw(-1, -1);
+                // gap /= 2;
+                //gapShell = (gap - 1) / 3;
+
+                //2^k - 1, starting at 1
+                gap = (gap + 1) / 2 - 1;
+                SortI = 0;
+                SortJ = 0;
             }
             else
             {
-                Draw(SortI, SortJ);
+                Stop();
+                SortI = -1;
+                SortJ = -1;
             }
 
+            Draw(SortI, SortJ);
+
+            compareCount++;
+            UpdateInfoLabels();
         }
 
-        #endregion
-
-        #region Binary Insertion
-
-        public void BinaryInsertSort()
+        private void BinaryInsertSort()
         {
             if (IndexToInsert != SortI)
             {
                 if (SortJ > IndexToInsert - 1)
                 {
-                    Swap(SortJ+1, SortJ);
+                    Swap(SortJ + 1, SortJ);
                     SortJ--;
                 }
                 else
@@ -307,7 +452,7 @@ namespace Sorting_Algorithms
             }
         }
 
-        public int BinarySearchForSpace(int toInsert, int min, int max)
+        private int BinarySearchForSpace(int toInsert, int min, int max)
         {
             int mid = (int)(array.Length / 2);
 
@@ -334,9 +479,44 @@ namespace Sorting_Algorithms
 
         #endregion
 
-        #region Quick Sort
+        #region Selection / Quick
 
-        #region QuickSortAlgorithm
+        private void SelectionSort()
+        {
+            if (SortJ < array.Length && SortJ > minIndex)
+            {
+                //finds smallest instance in array
+
+                if (array[SortJ] < array[minIndex])
+                {
+                    minIndex = SortJ;
+                }
+
+                compareCount++;
+                SortJ++;
+            }
+            else if (SortI < array.Length)
+            {
+                Swap(SortI, minIndex);
+
+                SortI++;
+                minIndex = SortI;
+                SortJ = minIndex + 1;
+            }
+
+            UpdateInfoLabels();
+
+            if (SortI > array.Length - 1)
+            {
+                Stop();
+                Draw(-1, -1);
+            }
+            else
+            {
+                Draw(SortI, SortJ);
+            }
+
+        }
 
         //public void QuickSort()
         //{
@@ -376,9 +556,7 @@ namespace Sorting_Algorithms
         //    return pivotIndex;
         //}
 
-        #endregion
-
-        public void QuickSort()
+        private void QuickSort_Lomuto()
         {
             if (currentStart < currentEnd)
             {
@@ -392,7 +570,7 @@ namespace Sorting_Algorithms
 
                     compareCount++;
                     SortJ++;
-                    Draw(SortJ, pivotIndex);
+                    Draw(SortJ, currentStart);
                 }
                 else
                 {
@@ -401,12 +579,12 @@ namespace Sorting_Algorithms
                     QuickSortsToPerform.Enqueue(new int[] { currentStart, pivotIndex - 1 });
                     QuickSortsToPerform.Enqueue(new int[] { pivotIndex + 1, currentEnd });
 
-                    GetNextQuickSortToPerform();
+                    DequeueQuickSort_Lomuto();
                 }
             }
             else if (QuickSortsToPerform.Count > 0)
             {
-                GetNextQuickSortToPerform();
+                DequeueQuickSort_Lomuto();
             }
             else
             {
@@ -417,20 +595,122 @@ namespace Sorting_Algorithms
             UpdateInfoLabels();
         }
 
-        public void GetNextQuickSortToPerform()
+        private void QuickSort_Hoare()
+        {
+            if (currentStart < currentEnd)
+            {
+                //while (array[SortI] < pivotValue)
+                //{
+                //    SortI++;
+                //}
+
+                //while (array[SortJ] > pivotValue)
+                //{
+                //    SortJ--;
+                //}
+
+                if (array[SortI] < pivotValue)
+                {
+                    SortI++;
+                }
+
+                if (array[SortJ] > pivotValue)
+                {
+                    SortJ--;
+                }
+
+                compareCount += 2;
+
+                if (!(array[SortI] < pivotValue) && !(array[SortJ] > pivotValue))
+                {
+                    if (SortI >= SortJ)
+                    {
+                        QuickSortsToPerform.Enqueue(new int[] { currentStart, SortJ });
+                        QuickSortsToPerform.Enqueue(new int[] { SortJ + 1, currentEnd });
+
+                        DequeueQuickSort_Hoare();
+                    }
+                    else
+                    {
+                        Swap(SortI, SortJ);
+                    }
+                }
+
+                Draw(SortI, SortJ);
+            }
+            else if (QuickSortsToPerform.Count > 0)
+            {
+                DequeueQuickSort_Hoare();
+            }
+            else
+            {
+                Stop();
+                Draw(-1, -1);
+            }
+
+            UpdateInfoLabels();
+        }
+
+        private void DequeueQuickSort_Lomuto()
         {
             //retrieves the partition information so the next iteration can perform
 
-            int[] newIndices = QuickSortsToPerform.Dequeue();
-            currentStart = newIndices[0];
-            currentEnd = newIndices[1];
+            int[] newIndices;
+
+            do
+            {
+                newIndices = QuickSortsToPerform.Dequeue();
+                currentStart = newIndices[0];
+                currentEnd = newIndices[1];
+            } while (currentStart >= currentEnd && QuickSortsToPerform.Count > 0);
 
             SortJ = currentStart;
             pivotIndex = currentStart;
 
             if (currentStart < currentEnd)
             {
+                if (runningAlgorithm == SortAlgs.QuickLomutoMedian)
+                {
+                    int mid = (currentStart + currentEnd) / 2;
+
+                    if (array[mid] < array[currentStart])
+                    {
+                        Swap(currentStart, mid);
+                    }
+                    if (array[currentEnd] < array[currentStart])
+                    {
+                        Swap(currentStart, currentEnd);
+                    }
+                    if (array[mid] < array[currentEnd])
+                    {
+                        Swap(mid, currentEnd);
+                    }
+                }
+
                 pivotValue = array[currentEnd];
+            }
+        }
+
+        private void DequeueQuickSort_Hoare()
+        {
+            //retrieves the partition information so the next iteration can perform
+
+            int[] newIndices;
+
+            do
+            {
+                newIndices = QuickSortsToPerform.Dequeue();
+                currentStart = newIndices[0];
+                currentEnd = newIndices[1];
+            } while (currentStart >= currentEnd && QuickSortsToPerform.Count > 0);
+
+            pivotIndex = currentStart;
+
+            if (currentStart < currentEnd)
+            {
+                pivotValue = array[(currentEnd + currentStart) / 2];
+                SortI = currentStart;
+                SortJ = currentEnd;
             }
         }
 
@@ -438,23 +718,31 @@ namespace Sorting_Algorithms
 
         #region Start Sort Buttons
 
-        public void StartSort()
+        private void StartSort()
         {
-            Shuffle();
+            //Shuffle();
             ResetLabels();
             EnableSortButtons(false);
-            interval = SortTimer.Interval.TotalMilliseconds;
+            time = 0;          
+            fillGap = true;
         }
 
-        public void EnableSortButtons(bool state)
+        private void EnableSortButtons(bool state)
         {
+            BarCount.IsEnabled = state;
             BubbleBtn.IsEnabled = state;
+            CocktailBtn.IsEnabled = state;
+            CombBtn.IsEnabled = state;
             InsertBtn.IsEnabled = state;
-            SelectBtn.IsEnabled = state;
+            ShellBtn.IsEnabled = state;
             BinaryInsertBtn.IsEnabled = state;
-            QuickBtn.IsEnabled = state;
+            SelectBtn.IsEnabled = state;
+            QuickLomutoBtn.IsEnabled = state;
+            QuickLomutoMedianBtn.IsEnabled = state;
+            QuickHoareBtn.IsEnabled = state;
 
             ShuffleBtn.IsEnabled = state;
+            ReverseBtn.IsEnabled = state;
             StopBtn.IsEnabled = !state;
         }
 
@@ -467,6 +755,36 @@ namespace Sorting_Algorithms
             SortI = 0;
             SortJ = 0;
 
+            fillGap = false;
+            SortTimer.Start();
+        }
+
+        private void CocktailBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.CocktailShaker;
+
+            SortI = 0;
+            SortJ = 0;
+            gap = 1;
+
+            fillGap = false;
+            SortTimer.Start();
+        }
+
+        private void CombBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.Comb;
+
+            SortI = 0;
+            SortJ = 0;
+            maxIndex = array.Length;
+
+            fillGap = false;
+            gap = (int)(array.Length / comb_K);
             SortTimer.Start();
         }
 
@@ -474,26 +792,33 @@ namespace Sorting_Algorithms
         {
             StartSort();
 
-            runningAlgorithm = SortAlgs.Insert;
+            runningAlgorithm = SortAlgs.Insertion;
 
             SortTimer.Start();
         }
 
-        private void SelectBtn_Click(object sender, RoutedEventArgs e)
+        private void ShellBtn_Click(object sender, RoutedEventArgs e)
         {
             StartSort();
 
-            runningAlgorithm = SortAlgs.Select;
+            runningAlgorithm = SortAlgs.Shell;
 
-            minIndex = SortI;
-            SortJ = minIndex + 1;
+            gap = 1;
+            while (gap < array.Length / 2)
+            {
+                //gapShell = gapShell * 3 + 1;
+                gap = (gap + 1) * 2 - 1;
+            }
+
+            // gapShell = (int)(array.Length / 2);
+            SortTimer.Start();
         }
 
         private void BinaryInsertBtn_Click(object sender, RoutedEventArgs e)
         {
             StartSort();
 
-            runningAlgorithm = SortAlgs.BinaryInsert;
+            runningAlgorithm = SortAlgs.BinaryInsertion;
 
             //if this breaks, use SortI = 0, and IndexToInsert = SortI;
             SortI = 1;
@@ -503,17 +828,73 @@ namespace Sorting_Algorithms
             SortTimer.Start();
         }
 
-        private void QuickBtn_Click(object sender, RoutedEventArgs e)
+        private void SelectBtn_Click(object sender, RoutedEventArgs e)
         {
             StartSort();
 
-            runningAlgorithm = SortAlgs.Quick;
+            runningAlgorithm = SortAlgs.Selection;
 
-            currentStart = 0;
-            currentEnd = array.Length - 1;
-            pivotIndex = currentStart;
-            pivotValue = array[currentEnd];
-            SortJ = 0;
+            SortI = 0;
+            minIndex = SortI;
+            SortJ = minIndex + 1;
+
+            fillGap = false;
+            SortTimer.Start();
+        }
+
+        private void QuickLomutoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.QuickLomuto;
+
+            QuickSortsToPerform.Enqueue(new int[] { 0, array.Length - 1 });
+            DequeueQuickSort_Lomuto();
+
+            //bool sorted = true;
+
+            //for (int i = 1; i < array.Length; i++)
+            //{
+            //    if (array[i] < array[i - 1])
+            //    {
+            //        sorted = false;
+            //        break;
+            //    }
+            //    Draw(-1, i);
+            //}
+
+            //if (sorted)
+            //{
+            //    Stop();
+            //    Draw(-1, -1);
+            //}
+            //else
+            //{
+            SortTimer.Start();
+            //}
+
+        }
+
+        private void QuickLomutoMedianBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.QuickLomutoMedian;
+
+            QuickSortsToPerform.Enqueue(new int[] { 0, array.Length - 1});
+            DequeueQuickSort_Lomuto();
+
+            SortTimer.Start();
+        }
+
+        private void QuickHoareBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.QuickHoare;
+
+            QuickSortsToPerform.Enqueue(new int[] { 0, array.Length - 1 });
+            DequeueQuickSort_Hoare();
 
             SortTimer.Start();
         }
@@ -526,10 +907,11 @@ namespace Sorting_Algorithms
         {
             ComparesLbl.Content = "Comparisons: " + compareCount;
             SwapsLbl.Content = "Swaps: " + swapCount;
-            TimeLbl.Content = "Time Elapsed: " + (time / 1000).ToString() + "s";
+
+            TimeLbl.Content = "Time Elapsed: " + time.ToString() + "s";
         }
 
-        public void ResetLabels()
+        private void ResetLabels()
         {
             compareCount = 0;
             swapCount = 0;
@@ -588,9 +970,7 @@ namespace Sorting_Algorithms
             thickness = (int)((this.Width - 2 * LeftIndent) / numOfElements);
             //thickness inverself proportional to the number of bars
 
-            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
-
-            RandomlyAssignArrayValues();
+            AssignArrayValues();  
 
             for (int i = 0; i < Lines.Length; i++)
             {
@@ -605,14 +985,46 @@ namespace Sorting_Algorithms
             Draw(-1, -1);
         }
 
-        private void RandomlyAssignArrayValues()
+        private void AssignRandomArrayValues()
         {
             //gives each instance a random double between 50 and maxHeight + 50
 
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = rand.NextDouble() * maxHeight + 50;
+                array[i] = minHeight;
+                array[i] += rand.NextDouble() * (maxHeight - minHeight);
             }
+        }
+
+        private void AssignLinearArrayValues()
+        {
+            //gives each instance a random double between 50 and maxHeight + 50
+
+            double deltaH = (maxHeight - minHeight) / array.Length;
+            array[0] = deltaH;
+
+            for (int i = 1; i < array.Length; i++)
+            {
+                array[i] = array[i - 1] + deltaH;
+            }
+        }
+
+        private void AssignArrayValues()
+        {
+            if ((bool)RandomValueCheck.IsChecked)
+            {
+                AssignRandomArrayValues();
+            }
+            else
+            {
+                AssignLinearArrayValues();
+            }
+        }
+
+        private void RandomValueCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            AssignArrayValues();
+            Draw(-1, -1);
         }
 
         #endregion
@@ -628,7 +1040,12 @@ namespace Sorting_Algorithms
             EnableSortButtons(true);
         }
 
-        public void Shuffle()
+        private void ReverseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ReverseOrder();
+        }
+
+        private void Shuffle()
         {
             //randomly orders all instances in the array
 
@@ -645,6 +1062,5 @@ namespace Sorting_Algorithms
         }
 
         #endregion
-
     }
 }
