@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Threading;
 using System.Windows.Threading;
-using System.Resources;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using System.Windows.Media.Animation;
-using System.Globalization;
 
 namespace Sorting_Algorithms
 {
-    enum SortAlgs { Bubble, CocktailShaker, Comb, Insertion, Selection, BinaryInsertion, QuickLomuto, QuickHoare, QuickLomutoMedian, Shell};
+    enum SortAlgs { Bubble, CocktailShaker, Comb, Insertion, Selection, DoubleSelect, BinaryInsertion, QuickLomuto, QuickHoare, QuickLomutoMedian, Shell};
 
     public partial class MainWindow : Window
     {
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 100, 100));
         SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(100, 100, 255));
-        SolidColorBrush dblue = new SolidColorBrush(Color.FromRgb(175, 150, 255));
+        SolidColorBrush dblue = new SolidColorBrush(Color.FromRgb(150, 175, 230));
+
+        Brush appBkg = Brushes.White;
+        Brush appFrg = Brushes.Black;
+        Brush borderColour = Brushes.Gray;
+
+        #region Variables
 
         bool fillGap = false;
 
@@ -48,8 +42,8 @@ namespace Sorting_Algorithms
 
         int numOfElements = 200;                                    //number of values/lines to sort
 
-        double LeftIndent = 100;                                    //how far from the left side of the window to the left-most bar
-        double TopIndent = 100;                                     //how far from the top side of the window to the top of the highest possible bar
+        double LeftIndent = 200;                                    //how far from the left side of the window to the left-most bar
+        double TopIndent = 150;                                     //how far from the top side of the window to the top of the highest possible bar
 
         int compareCount = 0;                                       //number of comparisons made between elements in the array per sort
         int swapCount = 0;                                          //number of times Swap() is called per sort
@@ -74,9 +68,16 @@ namespace Sorting_Algorithms
 
         double time = 0;
 
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
+
+            MinHeight = 400;
+            MinWidth = 860;
+
+            SortButtonsScroller.Height = myCanvas.Height;
 
             BitmapImage iconSrc = new BitmapImage();
             iconSrc.BeginInit();
@@ -85,14 +86,13 @@ namespace Sorting_Algorithms
 
             this.Icon = iconSrc;
 
-            maxHeight = (int)(this.Height - TopIndent);
-            //maximum height for the bars
-
             BarCount.Value = 50;
             SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 15);
 
             Shuffle();
             SortTimer.Tick += SortTimer_Tick;
+
+            //SwapColours();
         }
 
         private void SortTimer_Tick(object sender, EventArgs e)
@@ -121,6 +121,9 @@ namespace Sorting_Algorithms
                     break;
                 case SortAlgs.Selection:
                     SelectionSort();
+                    break;
+                case SortAlgs.DoubleSelect:
+                    DoubleSelectionSort();
                     break;
                 case SortAlgs.BinaryInsertion:
                     BinaryInsertSort();
@@ -165,10 +168,8 @@ namespace Sorting_Algorithms
                     colour = new SolidColorBrush(Color.FromArgb(255, (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height)));
                 }
 
-                Lines[i].X1 = i * thickness + 1.75 * LeftIndent;
+                Lines[i].X1 = i * thickness + LeftIndent;
                 Lines[i].X2 = Lines[i].X1;
-                Lines[i].Y1 = this.Height - 39;
-                Lines[i].Y2 = Lines[i].Y1 - array[i];
                 Lines[i].Stroke = colour;
             }
         }
@@ -518,6 +519,69 @@ namespace Sorting_Algorithms
 
         }
 
+        private void DoubleSelectionSort()
+        {
+            if (SortJ < array.Length - SortI)
+            {
+                //finds smallest instance in array
+
+                if (array[SortJ] < array[minIndex])
+                {
+                    minIndex = SortJ;
+                }
+
+                if (array[array.Length - SortJ - 1] > array[maxIndex])
+                {
+                    maxIndex = array.Length - SortJ - 1;
+                }
+
+                compareCount++;
+                SortJ++;
+            }
+            else if (SortI < array.Length / 2)
+            {
+                int firstSwapPos = SortI;
+                int secondSwapPos = array.Length - SortI - 1;
+
+                if (minIndex != maxIndex)
+                {
+                    Swap(firstSwapPos, minIndex);
+
+                    if (maxIndex == firstSwapPos)
+                    {
+                        maxIndex = minIndex;
+                        //if the maximum is moved by the first swap, then its index must be known
+                    }
+
+                    Swap(secondSwapPos, maxIndex);
+                }
+                else
+                {
+                    //min and max are in each other's spaces
+                    Swap(minIndex, maxIndex);
+                }
+
+                SortI++;
+                minIndex = SortI;
+                maxIndex = array.Length - SortI - 1;
+                SortJ = minIndex + 1;
+            }
+
+            UpdateInfoLabels();
+
+            if (SortI > array.Length / 2 - 1)
+            {
+                Stop();
+                Draw(-1, -1);
+            }
+            else
+            {
+                Draw(SortI, SortJ);
+            }
+
+        }
+
+
         //public void QuickSort()
         //{
         //    int[] indices = QuickSortsToPerform.Dequeue();
@@ -737,6 +801,7 @@ namespace Sorting_Algorithms
             ShellBtn.IsEnabled = state;
             BinaryInsertBtn.IsEnabled = state;
             SelectBtn.IsEnabled = state;
+            DoubleSelectBtn.IsEnabled = state;
             QuickLomutoBtn.IsEnabled = state;
             QuickLomutoMedianBtn.IsEnabled = state;
             QuickHoareBtn.IsEnabled = state;
@@ -836,6 +901,21 @@ namespace Sorting_Algorithms
 
             SortI = 0;
             minIndex = SortI;
+            SortJ = minIndex + 1;
+
+            fillGap = false;
+            SortTimer.Start();
+        }
+
+        private void DoubleSelectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartSort();
+
+            runningAlgorithm = SortAlgs.DoubleSelect;
+
+            SortI = 0;
+            minIndex = SortI;
+            maxIndex = array.Length - SortI - 1;
             SortJ = minIndex + 1;
 
             fillGap = false;
@@ -951,6 +1031,9 @@ namespace Sorting_Algorithms
 
         private void InitialiseBarsAndLines()
         {
+            maxHeight = (int)(this.Height - TopIndent);
+            //here in case window has been resizd
+
             array = new double[numOfElements];
             //creates array to store values to be sorted
 
@@ -967,7 +1050,7 @@ namespace Sorting_Algorithms
             Lines = new Line[numOfElements];
             //creates array of lines to represent the array values
 
-            thickness = (int)((this.Width - 2 * LeftIndent) / numOfElements);
+            thickness = (int)((this.Width - LeftIndent - 10) / numOfElements);
             //thickness inverself proportional to the number of bars
 
             AssignArrayValues();  
@@ -978,6 +1061,9 @@ namespace Sorting_Algorithms
 
                 Lines[i].ToolTip = Math.Round(array[i], 4);
                 Lines[i].StrokeThickness = thickness;
+
+                Lines[i].Y1 = this.Height - 39;
+                Lines[i].Y2 = Lines[i].Y1 - array[i];
 
                 myCanvas.Children.Add(Lines[i]);
             }
@@ -1009,19 +1095,93 @@ namespace Sorting_Algorithms
             }
         }
 
+        private void AssignExpArrayValues()
+        {
+            //assigns height based on exponential function
+
+            const double baseExp = 1.08;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                double pow = i + 1 - array.Length;
+                double val = Math.Pow(baseExp, pow);
+
+                array[i] = val * maxHeight + minHeight;
+            }
+        }
+
+        private void AssignLogArrayValues()
+        {
+            //assigns height based on natural logarithm function
+
+            const double c = 0.5;
+            double max = Math.Log(array.Length + c);
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                double val = Math.Log(i + c + 1) / max;
+
+                array[i] = val * maxHeight + minHeight;
+            }
+        }
+
         private void AssignArrayValues()
         {
-            if ((bool)RandomValueCheck.IsChecked)
+            if (RandomValueCheck == null)
             {
-                AssignRandomArrayValues();
+                AssignLinearArrayValues();
             }
             else
             {
-                AssignLinearArrayValues();
+                if ((bool)RandomValueCheck.IsChecked)
+                {
+                    AssignRandomArrayValues();
+                }
+                else if ((bool)ExpValueCheck.IsChecked)
+                {
+                    AssignExpArrayValues();
+                }
+                else if ((bool)LogValueCheck.IsChecked)
+                {
+                    AssignLogArrayValues();
+                }
+                else
+                {
+                    AssignLinearArrayValues();
+                }
+            }
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (Lines[i] == null)
+                {
+                    Lines[i] = new Line();
+                }
+
+                Lines[i].Y1 = this.Height - 39;
+                Lines[i].Y2 = Lines[i].Y1 - array[i];
             }
         }
 
         private void RandomValueCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            AssignArrayValues();
+            Draw(-1, -1);
+        }
+
+        private void LinearValueCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            AssignArrayValues();
+            Draw(-1, -1);
+        }
+
+        private void ExpValueCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            AssignArrayValues();
+            Draw(-1, -1);
+        }
+
+        private void LogValueCheck_Checked(object sender, RoutedEventArgs e)
         {
             AssignArrayValues();
             Draw(-1, -1);
@@ -1062,5 +1222,37 @@ namespace Sorting_Algorithms
         }
 
         #endregion
+
+        private void SwapColours()
+        {
+            Brush temp = appBkg;
+            appBkg = appFrg;
+            appFrg = temp;
+
+            UpdateColourScheme();
+        }
+
+        private void UpdateColourScheme()
+        {
+            for (int i = 0; i < myCanvas.Children.Count; i++)
+            {
+                if (myCanvas.Children[i] is Button)
+                {
+                    Button b = (Button)myCanvas.Children[i];
+                    b.Background = appBkg;
+                    b.Foreground = appFrg;
+                    myCanvas.Children[i] = b;
+                }
+            }
+
+            Background = appBkg;
+            Foreground = appFrg;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            InitialiseBarsAndLines();
+            SortButtonsScroller.Height = this.Height - 42;
+        }
     }
 }
