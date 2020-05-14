@@ -22,8 +22,8 @@
                 <GroupBox Name="InsertionGroup" Header="Insertion Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2" Canvas.Top="120">
                     <StackPanel Margin="2">
                         <Button Name="InsertBtn" Content="Insertion Sort" Margin="2" Canvas.Top="90" Width="100" Height="25" Click="InsertBtn_Click" ToolTip="Standard Insertion Sort with Early Exit"></Button>
-                        <Button Name="ShellBtn" Content="Shell Sort" Margin="2" Canvas.Top="120" Width="100" Height="25" Click="ShellBtn_Click" ToolTip="Shell-Optimised Insertion Sort where initial passes sort array in sub-lists"></Button>
                         <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="2" Canvas.Top="150" Width="100" Height="25" Click="BinaryInsertBtn_Click" ToolTip="Insertion Sort, using Binary Search to position elements"></Button>
+                        <Button Name="ShellBtn" Content="Shell Sort" Margin="2" Canvas.Top="120" Width="100" Height="25" Click="ShellBtn_Click" ToolTip="Shell-Optimised Insertion Sort where initial passes sort array in sub-lists"></Button>
                     </StackPanel>
                 </GroupBox>
 

@@ -87,7 +87,7 @@ namespace Sorting_Algorithms
             this.Icon = iconSrc;
 
             BarCount.Value = 50;
-            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 15);
+            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 20);
 
             Shuffle();
             SortTimer.Tick += SortTimer_Tick;
@@ -344,7 +344,7 @@ namespace Sorting_Algorithms
             if (SortJ >= 0 && array[SortJ] > array[SortJ + 1])
             {
                 Swap(SortJ, SortJ + 1);
-                SortJ = SortJ - 1;
+                SortJ -= 1;
             }
             else
             {
@@ -368,15 +368,23 @@ namespace Sorting_Algorithms
 
         private void ShellSort()
         {
-            if (SortJ >= 0 && array[SortJ] > array[SortJ + 1])
+            if (SortJ - gap >= 0 && SortJ < array.Length)
             {
-                Swap(SortJ, SortJ + 1);
-                SortJ -= 1;
+                if (array[SortJ] < array[SortJ - gap])
+                {
+                    Swap(SortJ, SortJ - gap);
+                }
+                else
+                {
+                    SortI += 1;
+                    SortJ = SortI + gap;
+                }
+                SortJ -= gap;
             }
-            else if (SortI + gap < array.Length)
+            else if (SortI < array.Length)
             {
-                SortI += gap;
-                SortJ = SortI - 1;
+                SortI += 1;
+                SortJ = SortI;
             }
             else if (gap > 1)
             {
@@ -385,8 +393,8 @@ namespace Sorting_Algorithms
 
                 //2^k - 1, starting at 1
                 gap = (gap + 1) / 2 - 1;
-                SortI = 0;
-                SortJ = 0;
+                SortI = gap;
+                SortJ = SortI;
             }
             else
             {
