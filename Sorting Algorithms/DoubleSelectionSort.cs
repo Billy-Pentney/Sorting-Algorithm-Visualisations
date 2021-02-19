@@ -15,11 +15,6 @@ namespace Sorting_Algorithms
             maxIndex = array.Length - SortI - 1;
         }
 
-        public override bool isFinished()
-        {
-            return (SortI >= array.Length / 2);
-        }
-
         public override double[] Run()
         {
             if (SortJ < array.Length - SortI)
@@ -66,6 +61,10 @@ namespace Sorting_Algorithms
                 minIndex = SortI;
                 maxIndex = array.Length - SortI - 1;
                 SortJ = minIndex + 1;
+            }
+            else
+            {
+                isFinished = true;
             }
 
             return array;

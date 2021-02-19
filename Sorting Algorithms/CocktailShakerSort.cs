@@ -9,6 +9,24 @@
             this.gap = 1;
         }
 
+/*        public override int getIPointer()
+        {
+            if (gap > 0)
+            {
+                return SortI;
+            }
+            return SortJ;
+        }
+
+        public override int getJPointer()
+        {
+            if (gap > 0)
+            {
+                return SortJ;
+            }
+            return SortI;
+        }*/
+
         public override double[] Run()
         {
             if (SortJ + gap < array.Length - (SortI) && SortJ + gap >= SortI)
@@ -35,17 +53,10 @@
             }
             else
             {
-                gap = 0;
-                SortI = -1;
-                SortJ = -1;
+                isFinished = true;
             }
 
             return array;
-        }
-
-        public override bool isFinished()
-        {
-            return gap == 0;
         }
     }
 }

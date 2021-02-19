@@ -10,10 +10,12 @@ namespace Sorting_Algorithms
     {
         protected int SortI = 0;  // main pointer
         protected int SortJ = 0;  // secondary pointer
-        protected Boolean swappedThisCycle = false;
+        protected bool swappedThisCycle = false;
         protected double[] array;
         protected int swapCount;
         protected int comparisonCount;
+        protected bool fillGapWithColour = false;
+        protected bool isFinished = false;
 
         public Sort(double[] array)
         {
@@ -22,10 +24,28 @@ namespace Sorting_Algorithms
             this.comparisonCount = 0;
         }
 
+        public bool isArraySorted()
+        {
+            // linear pass to determine if array is sorted (so heavy algorithms do not need to be started)
+
+            for (int i = 1; i < array.Length; i++)
+            {
+                comparisonCount++;
+                if (array[i] < array[i - 1])
+                    return false;
+            }
+            return true;
+        }
+
+        public bool getFillGap()
+        {
+            return fillGapWithColour;
+        }
+
         // performs next step of sort (called on a timer)
         public abstract double[] Run();
 
-        protected void Swap(int a, int b)
+        protected virtual void Swap(int a, int b)
         {
             //swaps array values and lines for indexes a and b in the respected arrays
 
@@ -33,19 +53,19 @@ namespace Sorting_Algorithms
             array[a] = array[b];
             array[b] = temp;
 
-/*            Line tempLine = Lines[a];
-            Lines[a] = Lines[b];
-            Lines[b] = tempLine;*/
-
             swapCount++;
         }
 
         // indicates whether sort has been fully executed
-        public abstract bool isFinished();
+        public bool hasFinished()
+        {
+            return isFinished;
+        }
 
-        public int getIPointer() { return SortI; }
-        public int getJPointer() { return SortJ; }
-        
+        public virtual int getIPointer() { return SortI; }
+        public virtual int getJPointer() { return SortJ; }
+        public virtual int getKPointer() { return -1; }
+
         public int getComparisons() { return comparisonCount; }
         public int getSwaps() { return swapCount; }
     }

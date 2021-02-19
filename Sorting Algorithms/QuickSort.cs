@@ -8,7 +8,7 @@ namespace Sorting_Algorithms
 {
     abstract class QuickSort : Sort
     {
-        protected Queue<int[]> queuedRegions = new Queue<int[]>();      //stores all pairs of values for which QuickSort still needs to be performed - if empty, the data is sorted
+        protected Queue<int[]> queuedRegions = new Queue<int[]>();            //stores all pairs of values for which QuickSort still needs to be performed - if empty, the data is sorted
 
         protected int currentEnd = 0;                                         //end of the current selection in QuickSort
         protected int currentStart = 0;                                       //start of the current selection in QuickSort
@@ -17,22 +17,41 @@ namespace Sorting_Algorithms
 
         public QuickSort(double[] array) : base(array)
         {
-            queuedRegions.Enqueue(new int[] { 0, array.Length - 1 });
-            Dequeue();
-        }
-
-        public override bool isFinished()
-        {
-            return queuedRegions.Count == 0 && currentStart >= currentEnd;
+            if (!isArraySorted())
+            {
+                queuedRegions.Enqueue(new int[] { 0, array.Length - 1 });
+                Dequeue();
+            }
+            fillGapWithColour = true;
         }
 
         protected abstract void Dequeue();
+
+        public override int getIPointer()
+        {
+            return currentStart;
+        }
+
+        public override int getJPointer()
+        {
+            return currentEnd;
+        }
+
+        public override int getKPointer()
+        {
+            return pivotIndex;
+        }
     }
 
     class HoareQuickSort : QuickSort
     {
         public HoareQuickSort(double[] array) : base(array)
         {
+        }
+
+        public override int getKPointer()
+        {
+            return SortJ;
         }
 
         public override double[] Run()
@@ -50,7 +69,6 @@ namespace Sorting_Algorithms
 
                 comparisonCount += 2;
 
-                //DeMorgan Simplification
                 if (!(firstCheck || secondCheck))
                 {
                     if (SortI >= SortJ)
@@ -69,6 +87,10 @@ namespace Sorting_Algorithms
             else if (queuedRegions.Count > 0)
             {
                 Dequeue();
+            }
+            else
+            {
+                isFinished = true;
             }
 
             return array;
@@ -132,6 +154,10 @@ namespace Sorting_Algorithms
             else if (queuedRegions.Count > 0)
             {
                 Dequeue();
+            }
+            else
+            {
+                isFinished = true;
             }
 
             return array;

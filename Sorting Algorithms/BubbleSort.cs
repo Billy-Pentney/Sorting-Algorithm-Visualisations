@@ -30,12 +30,9 @@
                 SortI++;
             }
 
-            return array;
-        }
+            isFinished = (SortI >= array.Length);
 
-        public override bool isFinished()
-        {
-            return SortI >= array.Length;
+            return array;
         }
     }
 }

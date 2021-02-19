@@ -12,6 +12,7 @@ namespace Sorting_Algorithms
 
         public ShellSort(double[] array) : base(array)
         {
+            fillGapWithColour = true;
             gap = 1;
             while (gap < array.Length / 2)
             {
@@ -19,12 +20,6 @@ namespace Sorting_Algorithms
                 gap = (gap + 1) * 2 - 1;
             }
         }
-
-        public override bool isFinished()
-        {
-            return gap == -1;
-        }
-
         public override double[] Run()
         {
             if (SortJ - gap >= 0 && SortJ < array.Length)
@@ -57,9 +52,7 @@ namespace Sorting_Algorithms
             }
             else
             {
-                gap = -1;
-                SortI = -1;
-                SortJ = -1;
+                isFinished = true;
             }
 
             comparisonCount++;

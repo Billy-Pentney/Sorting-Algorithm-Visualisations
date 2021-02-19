@@ -10,11 +10,12 @@ namespace Sorting_Algorithms
     {
         public InsertionSort(double[] array) : base(array)
         {
+            fillGapWithColour = true;
         }
 
-        public override bool isFinished()
+        public override int getJPointer()
         {
-            return SortI > array.Length - 1;
+            return SortJ + 1;
         }
 
         public override double[] Run()
@@ -31,6 +32,7 @@ namespace Sorting_Algorithms
             }
 
             comparisonCount++;
+            isFinished = (SortI >= array.Length);
 
             return array;
         }

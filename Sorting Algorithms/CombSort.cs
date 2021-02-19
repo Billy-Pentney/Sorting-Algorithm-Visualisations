@@ -12,11 +12,6 @@
             gap = (int)(array.Length / comb_K);
         }
 
-        public override bool isFinished()
-        {
-            return SortJ == -1;
-        }
-
         public override double[] Run()
         {
             if (SortJ + gap < maxIndex)
@@ -52,8 +47,7 @@
             }
             else
             {
-                maxIndex = 0;
-                SortJ = -1;
+                isFinished = true;
             }
 
             return array;

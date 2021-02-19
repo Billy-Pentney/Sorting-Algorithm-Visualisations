@@ -6,63 +6,85 @@
         xmlns:local="clr-namespace:Sorting_Algorithms"
         mc:Ignorable="d"
         SizeChanged="Window_SizeChanged"
-        Title="Sorting Algorithms" Height="600" Width="860" ResizeMode="CanResize" WindowStartupLocation="CenterScreen">
-    <Canvas Name="myCanvas">
+        StateChanged="Window_StateChanged"
+        MinHeight="500"
+        MinWidth="900"
+        Title="Sorting Algorithms" Height="600" Width="900" ResizeMode="CanResize" WindowStartupLocation="CenterScreen">
+    <Canvas Name="myCanvas" >
 
-        <ScrollViewer Name="SortButtonsScroller" Height="568" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Name="SortButtonsScroller" Height="568" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Width="180">
             <StackPanel>
                 <GroupBox Name="BubbleGroup" Header="Bubble Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2">
                     <StackPanel Margin="2">
-                        <Button Name="BubbleBtn" Content="Bubble Sort" Margin="2" Width="100" Height="25" Click="BubbleBtn_Click" ToolTip="Standard Bubble Sort with Early Exit"></Button>
-                        <Button Name="CocktailBtn" Content="Cocktail Shaker" Margin="2" Width="100" Height="25" Click="CocktailBtn_Click" ToolTip="Bubble Sort which alternates between moving up and down the array"></Button>
-                        <Button Name="CombBtn" Content="Comb Sort" Margin="2" Width="100" Height="25" Click="CombBtn_Click" ToolTip="Bubble Sort comparing elements separated by a decreasng interval"></Button>
+                        <Button Name="BubbleBtn" Content="Bubble Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Standard Bubble Sort with Early Exit"></Button>
+                        <Button Name="CocktailBtn" Content="Cocktail Shaker" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Bubble Sort which alternates between moving up and down the array"></Button>
+                        <Button Name="CombBtn" Content="Comb Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Bubble Sort comparing elements separated by a decreasng interval"></Button>
                     </StackPanel>
                 </GroupBox>
 
                 <GroupBox Name="InsertionGroup" Header="Insertion Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2" Canvas.Top="120">
                     <StackPanel Margin="2">
-                        <Button Name="InsertBtn" Content="Insertion Sort" Margin="2" Canvas.Top="90" Width="100" Height="25" Click="InsertBtn_Click" ToolTip="Standard Insertion Sort with Early Exit"></Button>
-                        <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="2" Canvas.Top="150" Width="100" Height="25" Click="BinaryInsertBtn_Click" ToolTip="Insertion Sort, using Binary Search to position elements"></Button>
-                        <Button Name="ShellBtn" Content="Shell Sort" Margin="2" Canvas.Top="120" Width="100" Height="25" Click="ShellBtn_Click" ToolTip="Shell-Optimised Insertion Sort where initial passes sort array in sub-lists"></Button>
+                        <Button Name="InsertBtn" Content="Insertion Sort" Margin="2" Canvas.Top="90" Height="25" Click="SortButton_Click" ToolTip="Standard Insertion Sort with Early Exit"></Button>
+                        <Button Name="BinaryInsertBtn" Content="Binary Insertion" Margin="2" Canvas.Top="120" Height="25" Click="SortButton_Click" ToolTip="Insertion Sort, using Binary Search to position elements"></Button>
+                        <Button Name="ShellBtn" Content="Shell Sort" Margin="2" Canvas.Top="120" Height="25" Click="SortButton_Click" ToolTip="Shell-Optimised Insertion Sort where initial passes sort array in sub-lists"></Button>
                     </StackPanel>
                 </GroupBox>
 
                 <GroupBox Name="SelectionGroup" Header="Selection Sort" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2" Canvas.Top="240">
                     <StackPanel Margin="2">
-                        <Button Name="SelectBtn" Content="Selection Sort" Margin="2" Width="100" Height="25" Click="SelectBtn_Click" ToolTip="Standard Selection Sort with Early Exit"/>
-                        <Button Name="DoubleSelectBtn" Content="Double Selection" Margin="2" Width="100" Height="25" Click="DoubleSelectBtn_Click" ToolTip="Selection Sort which finds minimum and maximum on each pass"/>
+                        <Button Name="SelectBtn" Content="Selection Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Standard Selection Sort with Early Exit"/>
+                        <Button Name="DoubleSelectBtn" Content="Double Selection" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Selection Sort which finds minimum and maximum on each pass"/>
                     </StackPanel>
                 </GroupBox>
 
                 <GroupBox Name="QuickSortGroup" Header="Quick Sort" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2" Canvas.Top="300">
                     <StackPanel Margin="2">
-                        <Button Name="QuickLomutoBtn" Content="Quick (Lomuto)" Margin="2" Canvas.Top="210" Width="100" Height="25" Click="QuickLomutoBtn_Click" ToolTip="Quick Sort using Lomuto Partitioning (pivot at end)"></Button>
-                        <Button Name="QuickHoareBtn" Content="Quick (Hoare)" Margin="2" Canvas.Top="270" Width="100" Height="25" Click="QuickHoareBtn_Click" ToolTip="Lomuto Quick Sort with median Partitioning (pivot in median)"></Button>
-                        <Button Name="QuickLomutoMedianBtn" Content="Quick (Median)" Margin="2" Canvas.Top="240" Width="100" Height="25" Click="QuickLomutoMedianBtn_Click" ToolTip="Quick Sort with Hoare Partitioning (pivot in midpoint)"></Button>
+                        <Button Name="QuickLomutoBtn" Content="Quick (Lomuto)" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Quick Sort using Lomuto Partitioning (pivot at end)"></Button>
+                        <Button Name="QuickHoareBtn" Content="Quick (Hoare)" Margin="2" Canvas.Top="270" Height="25" Click="SortButton_Click" ToolTip="Quick Sort with Hoare Partitioning (pivot in midpoint)"></Button>
+                        <Button Name="QuickLomutoMedianBtn" Content="Quick (Median)" Margin="2" Canvas.Top="240" Height="25" Click="SortButton_Click" ToolTip="Lomuto Quick Sort with median Partitioning (pivot in median)"></Button>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Name="OtherSortsGroup" Header="Other Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2" Canvas.Top="350">
+                    <StackPanel Margin="2">
+                        <Button Name="MergeBtn" Content="Merge Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Merge Sort"></Button>
+                        <Button Name="CycleBtn" Content="Cycle Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Cycle Sort"></Button>
+                        <Button Name="PatienceSort" Content="Patience Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Patience Sort without Priority Queue"></Button>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
         </ScrollViewer>
 
-        <Button Name="ShuffleBtn" Content="Shuffle" Canvas.Right="10" Height="25" Width="100" Click="ShuffleBtn_Click" Canvas.Top="70" ToolTip="Randomly order the current array"/>
-        <Button Name="ReverseBtn" Content="Reverse Order" Canvas.Right="120" Canvas.Top="70" Height="25" Width="100" Click="ReverseBtn_Click" ToolTip="Reverse the current array order"/>
-
-        <Button Name="StopBtn" BorderThickness="3" FontSize="16" FontFamily="Futura" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="10" Canvas.Top="10" Height="50" Width="100" Click="StopBtn_Click"></Button>
-        <Label Name="ComparesLbl" Content="Comparisons: " Canvas.Right="115" Width="140" Canvas.Top="10" ToolTip="Number of comparisons made between array elements during this sort"></Label>
-        <Label Name="SwapsLbl" Content="Swaps: " Width="105" Canvas.Right="114" Canvas.Top="35" ToolTip="Number of swaps made to array during this sort"></Label>
-
-        <Label Name="CountLbl" Content="Elements: " Canvas.Left="330" Canvas.Top="70" Width="100"/>
-        <Slider Name="BarCount" Minimum="10" Maximum="200" Canvas.Left="329" Height="25" Canvas.Top="13" Width="252" Value="40" ValueChanged="BarCount_ValueChanged" VerticalContentAlignment="Center"/>
-        <Label Name="BarExpLbl" Content="Drag the slider to change the size of the array" Canvas.Left="329" Canvas.Top="35"></Label>
-        <Label Name="TimeLbl" Content="Time Elapsed: " Canvas.Left="110" Canvas.Top="60" Margin="10" Visibility="Hidden"></Label>
-
-        <GroupBox Margin="10" Canvas.Left="160" BorderBrush="Gray" BorderThickness="2" Header="Data Styles">
-            <StackPanel Name="DataStyleCheckBoxes" Margin="2" Width="135">
-                <RadioButton Name="LinearValueCheck" IsChecked="True" Margin="2" Content="Linear Values" Canvas.Left="175" Canvas.Top="42" Checked="LinearValueCheck_Checked" ToolTip="Check to use linear heights"></RadioButton>
-                <RadioButton Name="RandomValueCheck" Margin="2" Content="Random Values" Canvas.Left="175" Canvas.Top="42" Checked="RandomValueCheck_Checked" ToolTip="Check to use random heights"></RadioButton>
-                <RadioButton Name="ExpValueCheck" Margin="2" Content="Exponential Values" Canvas.Left="175" Canvas.Top="42" Checked="ExpValueCheck_Checked" ToolTip="Check to use exponential heights"></RadioButton>
-                <RadioButton Name="LogValueCheck" Margin="2" Content="Logarithm Values" Canvas.Left="175" Canvas.Top="42" Checked="LogValueCheck_Checked" ToolTip="Check to use log (base e) heights"></RadioButton>
+        <GroupBox Margin="10" Canvas.Left="180" BorderBrush="Gray" BorderThickness="2" Header="Data Functions">
+            <StackPanel Name="DataFunctionsCheckBoxes" Margin="2" Width="100" Height="75">
+                <RadioButton Name="LinearValueCheck" IsChecked="True" Margin="2" Content="Linear" Canvas.Left="175" Canvas.Top="42" Checked="LinearValueCheck_Checked" ToolTip="Check to use linear heights"></RadioButton>
+                <RadioButton Name="RandomValueCheck" Margin="2" Content="Random" Canvas.Left="175" Canvas.Top="42" Checked="LinearValueCheck_Checked" ToolTip="Check to use random heights"></RadioButton>
+                <RadioButton Name="ExpValueCheck" Margin="2" Content="Exponential" Canvas.Left="175" Canvas.Top="42" Checked="LinearValueCheck_Checked" ToolTip="Check to use exponential heights"></RadioButton>
+                <RadioButton Name="LogValueCheck" Margin="2" Content="Logarithm" Canvas.Left="175" Canvas.Top="42" Checked="LinearValueCheck_Checked" ToolTip="Check to use log (base e) heights"></RadioButton>
             </StackPanel>
         </GroupBox>
+
+        <GroupBox Margin="10" Canvas.Left="305" BorderBrush="Gray" BorderThickness="2" Header="Elements">
+            <StackPanel Name="ElementCountSliderBox" Margin="2" Height="75" Width="140">
+                <Label Name="CountLbl" Content="50"  Margin="5" VerticalAlignment="Center" Canvas.Left="320" HorizontalContentAlignment="Center" FontSize="18"/>
+                <Slider Name="BarCount" Minimum="10" Margin="5" VerticalAlignment="Center" Maximum="200" Canvas.Left="350" Height="20" Value="50" ValueChanged="BarCount_ValueChanged" VerticalContentAlignment="Center"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Margin="10" Canvas.Left="470" BorderBrush="Gray" BorderThickness="2" Header="Comparisons">
+            <StackPanel Name="ComparisonsBox" Margin="2" Width="75" Height="35">
+                <Label Name="ComparesLbl" VerticalAlignment="Center" FontSize="18" FontStyle="Italic" FontWeight="SemiBold" HorizontalAlignment="Center" Content="0" ToolTip="Number of comparisons made between array elements during this sort"></Label>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Margin="10" Canvas.Left="565" BorderBrush="Gray" BorderThickness="2" Header="Swaps">
+            <StackPanel Name="SwapsBox" Margin="2" Width="75" Height="35">
+                <Label Name="SwapsLbl" VerticalAlignment="Center" FontSize="18" FontStyle="Italic" FontWeight="SemiBold" HorizontalAlignment="Center" Content="0" ToolTip="Number of swaps made to array during this sort"></Label>
+            </StackPanel>
+        </GroupBox>
+
+        <Button Name="ShuffleBtn" Content="Shuffle" Canvas.Right="125" Height="25" Width="80" Click="ShuffleBtn_Click" Canvas.Top="15" ToolTip="Randomly order the current array"/>
+        <Button Name="ReverseBtn" Content="Reverse" Canvas.Right="125" Canvas.Top="45" Height="25" Width="80" Click="ReverseBtn_Click" ToolTip="Reverse the current array order"/>
+        <Button Name="StopBtn" BorderThickness="3" FontSize="16" FontFamily="Futura" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="15" Canvas.Top="15" Height="55" Width="105" Click="StopBtn_Click"></Button>
     </Canvas>
 </Window>

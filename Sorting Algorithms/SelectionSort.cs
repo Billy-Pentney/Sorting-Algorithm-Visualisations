@@ -17,9 +17,9 @@ namespace Sorting_Algorithms
             SortJ = minIndex + 1;
         }
 
-        public override bool isFinished()
+        public override int getKPointer()
         {
-            return SortI >= array.Length;
+            return minIndex;
         }
 
         public override double[] Run()
@@ -44,6 +44,8 @@ namespace Sorting_Algorithms
                 minIndex = SortI;
                 SortJ = minIndex + 1;
             }
+
+            isFinished = (SortI >= array.Length);
 
             return array;
         }

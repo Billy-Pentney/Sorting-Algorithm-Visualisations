@@ -15,8 +15,10 @@ namespace Sorting_Algorithms
     public partial class MainWindow : Window
     {
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 100, 100));
+        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(250, 250, 80));
+        SolidColorBrush green = new SolidColorBrush(Color.FromRgb(100, 250, 100));
         SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(100, 100, 255));
-        SolidColorBrush dblue = new SolidColorBrush(Color.FromRgb(150, 175, 230));
+        SolidColorBrush d_blue = new SolidColorBrush(Color.FromRgb(150, 175, 230));
 
         Brush appBkg = Brushes.White;
         Brush appFrg = Brushes.Black;
@@ -34,13 +36,25 @@ namespace Sorting_Algorithms
         double barGap = 0;
         DispatcherTimer SortTimer = new DispatcherTimer();          //timer to control when the sort algorithm increments and the display is updated
 
-        const int minHeight = 15;                                   //minimum height of the bars
-        int maxHeight;                                              //maximum height of the bars - dependent on window size
+        double maxBarH;                                              //maximum height of the bars - dependent on window size
 
-        int numOfElements = 200;                                    //number of values/lines to sort
+        double minBarVal = 3;
+        double maxBarVal = 100;
+
+        int numOfElements = 10;                                     //number of values/lines to sort
+        const int minElements = 10;
+        const int maxElements = 200;
 
         double LeftIndent = 200;                                    //how far from the left side of the window to the left-most bar
+        double RightIndent = 30;                                    //how far from the right side of the window to the right-most bar
         double TopIndent = 160;                                     //how far from the top side of the window to the top of the highest possible bar
+
+        double currHeight = 600;
+        double currWidth = 600;
+        double normalHeight;
+        double normalWidth;
+        double maximisedHeight;
+        double maximisedWidth;
 
         #endregion
 
@@ -48,11 +62,19 @@ namespace Sorting_Algorithms
 
         public MainWindow()
         {
+            maximisedHeight = SystemParameters.WorkArea.Height;
+            maximisedWidth = SystemParameters.WorkArea.Width;
+
             InitializeComponent();
+            LeftIndent = SortButtonsScroller.Width;
 
-            MinHeight = 400;
-            MinWidth = 860;
+            normalHeight = this.Height;
+            normalWidth = this.Width;
+            currHeight = normalHeight;
+            currWidth = normalWidth;
 
+            InitialiseArray();
+            InitialiseLines();
             SortButtonsScroller.Height = myCanvas.Height;
 
             BitmapImage iconSrc = new BitmapImage();
@@ -63,12 +85,10 @@ namespace Sorting_Algorithms
             this.Icon = iconSrc;
 
             BarCount.Value = 50;
-            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 20);
+            SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 30);
 
             Shuffle();
             SortTimer.Tick += SortTimer_Tick;
-
-            //SwapColours();
         }
 
         private void SortTimer_Tick(object sender, EventArgs e)
@@ -82,28 +102,29 @@ namespace Sorting_Algorithms
             // performs next iteration of the sort algorithm and displays the array afterwards
             array = currentSort.Run();
 
-            if (currentSort.isFinished())
+            if (currentSort.hasFinished())
             {
                 Stop();
             }
             else
             {
-                int sortI = currentSort.getIPointer();
-                int sortJ = currentSort.getJPointer();
-
-                Draw(sortI, sortJ);
+                Draw(currentSort.getIPointer(), currentSort.getJPointer(), currentSort.getKPointer());
             }
         }
 
-        private void Draw(int iPos, int jPos)
+        private void Draw(int iPos, int jPos, int kPos)
         {
             Brush colour;
 
             for (int i = 0; i < array.Length; i++)
             {
+                double position = array[i] / maxBarVal;
+                // 0 <= position <= 1
+                // so it indicates what proportion of the window height the value is
+
                 if (i == iPos)
                 {
-                    // main pointer
+                    // primary pointer
                     colour = red;
                 }
                 else if (i == jPos)
@@ -111,22 +132,35 @@ namespace Sorting_Algorithms
                     // secondary pointer
                     colour = blue;
                 }
+                else if (i == kPos)
+                {
+                    // tertiary pointer
+                    colour = green;
+                }
                 else if (fillGap && (i > iPos && i < jPos || i > jPos && i < iPos))
                 {
                     // interval between pointers
-                    colour = dblue;
+                    colour = d_blue;
                 }
                 else
                 {
-                    // set others based on position in array
-                    Color color = Color.FromArgb(255, (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height), (byte)(array[i] * 255 / this.Height));
-                    colour = new SolidColorBrush(color);
+                    colour = new SolidColorBrush(Color.FromArgb(255, (byte)(200 * position), (byte)(180 * position), (byte)(250 * position)));
                 }
 
                 Lines[i].Stroke = colour;
                 Lines[i].ToolTip = Math.Round(array[i], 2);
-                Lines[i].Y1 = this.Height - 39;
-                Lines[i].Y2 = Lines[i].Y1 - array[i];
+                Lines[i].Y1 = currHeight;
+
+                if (!isWindowMaximised())
+                {
+                    Lines[i].Y1 -= 39;
+                }
+                else
+                {
+                    Lines[i].Y1 -= 20;
+                }
+
+                Lines[i].Y2 = Lines[i].Y1 - position * maxBarH;
             }
         }
 
@@ -148,46 +182,8 @@ namespace Sorting_Algorithms
             for (int i = 0; i < array.Length / 2; i++)
                 Swap(i, num - i);
 
-            Draw(-1, -1);
+            DrawBlank();
         }
-
-        //public void QuickSort()
-        //{
-        //    int[] indices = QuickSortsToPerform.Dequeue();
-        //    int start = indices[0];
-        //    int end = indices[1];
-
-        //    if (start < end)
-        //    {
-        //        int index = Partition(start, end);
-        //        QuickSortsToPerform.Enqueue(new int[] { start, index - 1 });
-        //        QuickSortsToPerform.Enqueue(new int[] { index + 1, end });
-        //        Draw(start, end);
-        //    }
-        //}
-
-        //public int Partition(int start, int end)
-        //{
-        //    double pivotValue = array[end];
-        //    int pivotIndex = start;
-
-        //    for (int i = start; i < end; i++)
-        //    {
-        //        if (array[i] < pivotValue)
-        //        {
-        //            Swap(i, pivotIndex);
-        //            pivotIndex++;
-        //        }
-
-        //        Draw(pivotIndex, i);
-        //        compareCount++;
-        //    }
-
-        //    Swap(pivotIndex, end);
-        //    UpdateInfoLabels();
-
-        //    return pivotIndex;
-        //}
 
         #region Start Sort Buttons
 
@@ -196,7 +192,7 @@ namespace Sorting_Algorithms
             //Shuffle();
             ResetLabels();
             EnableSortButtons(false);
-            fillGap = true;
+            fillGap = currentSort.getFillGap();
             SortTimer.Start();
         }
 
@@ -208,77 +204,66 @@ namespace Sorting_Algorithms
             InsertionGroup.IsEnabled = state;
             SelectionGroup.IsEnabled = state;
             QuickSortGroup.IsEnabled = state;
+            OtherSortsGroup.IsEnabled = state;
 
-            DataStyleCheckBoxes.IsEnabled = state;
+            DataFunctionsCheckBoxes.IsEnabled = state;
 
             ShuffleBtn.IsEnabled = state;
             ReverseBtn.IsEnabled = state;
             StopBtn.IsEnabled = !state;
         }
 
-        private void BubbleBtn_Click(object sender, RoutedEventArgs e)
+        private void SortButton_Click(object Sender, RoutedEventArgs e)
         {
-            currentSort = new BubbleSort(array);
-            StartSort();
-        }
+            Button btnSender = (Button)Sender;
+            switch (btnSender.Content)
+            {
+                case "Bubble Sort":
+                    currentSort = new BubbleSort(array);
+                    break;
+                case "Cocktail Shaker":
+                    currentSort = new CocktailShakerSort(array);
+                    break;
+                case "Comb Sort":
+                    currentSort = new CombSort(array);
+                    break;
+                case "Insertion Sort":
+                    currentSort = new InsertionSort(array);
+                    break;
+                case "Binary Insertion":
+                    currentSort = new BinaryInsertion(array);
+                    break;
+                case "Shell Sort":
+                    currentSort = new ShellSort(array);
+                    break;
+                case "Selection Sort":
+                    currentSort = new SelectionSort(array);
+                    break;
+                case "Double Selection":
+                    currentSort = new DoubleSelectionSort(array);
+                    break;
+                case "Quick (Lomuto)":
+                    currentSort = new LomutoQuickSort(array);
+                    break;
+                case "Quick (Hoare)":
+                    currentSort = new HoareQuickSort(array);
+                    break;
+                case "Quick (Median)":
+                    currentSort = new LomutoMedianQuickSort(array);
+                    break;
+                case "Merge Sort":
+                    currentSort = new MergeSort(array);
+                    break;
+                case "Cycle Sort":
+                    currentSort = new CycleSort(array);
+                    break;
+                case "Patience Sort":
+                    currentSort = new PatienceSort(array);
+                    break;
+                default:
+                    return;
+            }
 
-        private void CocktailBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new CocktailShakerSort(array);
-            StartSort();
-        }
-
-        private void CombBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new CombSort(array);
-            StartSort();
-        }
-
-        private void InsertBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new InsertionSort(array);
-            StartSort();
-        }
-
-        private void ShellBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new ShellSort(array);
-            StartSort();
-        }
-
-        private void BinaryInsertBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new BinaryInsertion(array);
-            StartSort();
-        }
-
-        private void SelectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new SelectionSort(array);
-            StartSort();
-        }
-
-        private void DoubleSelectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new DoubleSelectionSort(array);
-            StartSort();
-        }
-
-        private void QuickLomutoBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new LomutoQuickSort(array);
-            StartSort();
-        }
-
-        private void QuickLomutoMedianBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new LomutoMedianQuickSort(array);
-            StartSort();
-        }
-
-        private void QuickHoareBtn_Click(object sender, RoutedEventArgs e)
-        {
-            currentSort = new HoareQuickSort(array);
             StartSort();
         }
 
@@ -288,10 +273,8 @@ namespace Sorting_Algorithms
 
         private void UpdateInfoLabels(int comps, int swaps)
         {
-            ComparesLbl.Content = "Comparisons: " + comps;
-            SwapsLbl.Content = "Swaps: " + swaps;
-
-            //TimeLbl.Content = "Time Elapsed: " + time.ToString() + "s";
+            ComparesLbl.Content = comps.ToString();
+            SwapsLbl.Content = swaps.ToString();
         }
 
         private void ResetLabels()
@@ -311,7 +294,7 @@ namespace Sorting_Algorithms
         {
             SortTimer.Stop();
             EnableSortButtons(true);
-            Draw(-1, -1);
+            DrawBlank();
         }
 
         #endregion
@@ -321,81 +304,95 @@ namespace Sorting_Algorithms
         private void BarCount_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             numOfElements = (int)BarCount.Value;
-            CountLbl.Content = "Elements: " + numOfElements;
-
-            InitialiseBarsAndLines();
+            CountLbl.Content = numOfElements.ToString();
+            InitialiseArray();
+            InitialiseLines();
         }
 
-        private void InitialiseBarsAndLines()
+        private void InitialiseArray()
         {
-            maxHeight = (int)(this.Height - TopIndent);
-            //here in case window has been resizd
+            numOfElements = Math.Max(numOfElements, minElements);
+            numOfElements = Math.Min(numOfElements, maxElements);
 
             array = new double[numOfElements];
-            //creates array to store values to be sorted
+
+            if (RandomValueCheck == null)
+            {
+                AssignLinearArrayValues();
+            }
+            else
+            {
+                if ((bool)RandomValueCheck.IsChecked)
+                    AssignRandomArrayValues();
+                else if ((bool)ExpValueCheck.IsChecked)
+                    AssignExpArrayValues();
+                else if ((bool)LogValueCheck.IsChecked)
+                    AssignLogArrayValues();
+                else
+                    AssignLinearArrayValues();
+            }
+        }
+
+        private void InitialiseLines()
+        {
+            SortButtonsScroller.Height = currHeight;
+
+            if (!isWindowMaximised())
+            {
+                SortButtonsScroller.Height -= 39;
+            }
+
+            maxBarH = currHeight - TopIndent;
 
             if (Lines != null)
             {
-                //if lines exists, remove them from the canvas
-
-                for (int i = 0; i < Lines.Length; i++)
+                foreach (Line line in Lines)
                 {
-                    myCanvas.Children.Remove(Lines[i]);
+                    myCanvas.Children.Remove(line);
                 }
             }
 
-            Lines = new Line[numOfElements];
+            //creates array to store values to be sorted
+            Lines = new Line[array.Length];
             //creates array of lines to represent the array values
 
-            double actualArea = this.Width - 1.2 * LeftIndent;
+            double useableWidth = currWidth - LeftIndent - 2 * RightIndent;
 
-            thickness = (int)(actualArea / numOfElements);
+            thickness = (int)(useableWidth / numOfElements);
             //thickness inversely proportional to the number of bars
 
-            barGap = (actualArea - thickness * array.Length) / (array.Length - 1);
-
-            AssignArrayValues();  
+            barGap = (useableWidth - thickness * array.Length) / (array.Length + 1);
 
             for (int i = 0; i < Lines.Length; i++)
             {
                 Lines[i] = new Line();
-
-                Lines[i].ToolTip = Math.Round(array[i], 4);
-                Lines[i].Y1 = this.Height - 39;
-                Lines[i].Y2 = Lines[i].Y1 - array[i];
-
                 Lines[i].StrokeThickness = thickness;
 
-                Lines[i].X1 = i * (thickness + barGap) + LeftIndent;
+                Lines[i].X1 = LeftIndent + 0.9 * RightIndent + i * (thickness + barGap) + thickness / 2;
                 Lines[i].X2 = Lines[i].X1;
 
                 myCanvas.Children.Add(Lines[i]);
             }
 
-            Draw(-1, -1);
+            DrawBlank();
         }
 
         private void AssignRandomArrayValues()
         {
-            //gives each instance a random double between 50 and maxHeight + 50
-
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = minHeight;
-                array[i] += rand.NextDouble() * (maxHeight - minHeight);
+                array[i] = minBarVal + rand.NextDouble() * (maxBarVal - minBarVal);
             }
         }
 
         private void AssignLinearArrayValues()
         {
-            //gives each instance a random double between 50 and maxHeight + 50
-
-            double deltaH = (maxHeight - minHeight) / array.Length;
-            array[0] = deltaH;
+            array[0] = minBarVal;
+            double delta = (maxBarVal - minBarVal) / (array.Length + 1);
 
             for (int i = 1; i < array.Length; i++)
             {
-                array[i] = array[i - 1] + deltaH;
+                array[i] = array[i - 1] + delta;
             }
         }
 
@@ -403,7 +400,7 @@ namespace Sorting_Algorithms
         {
             //assigns height based on exponential function
 
-            double a = 1.8;     //increase to make exponential increase "tighter" to right end
+            double a = 1.8;         //increase to make exponential increase "tighter" to right end
             double b = -0.1;        //decrease magnitude to reduce change as array length increases
 
             double baseExp = a * Math.Pow(array.Length, b);
@@ -412,10 +409,10 @@ namespace Sorting_Algorithms
 
             for (int i = 0; i < array.Length; i++)
             {
-                double pow = i + 1 - array.Length;
+                double pow = i - array.Length;
                 double val = Math.Pow(baseExp, pow);
 
-                array[i] = val * (maxHeight - minHeight) + minHeight;
+                array[i] = minBarVal + val * (maxBarVal - minBarVal);
             }
         }
 
@@ -430,7 +427,7 @@ namespace Sorting_Algorithms
             {
                 double val = Math.Log(i + c + 1) / max;
 
-                array[i] = val * (maxHeight - minHeight) + minHeight;
+                array[i] = minBarVal + val * (maxBarVal - minBarVal);
             }
         }
 
@@ -445,70 +442,14 @@ namespace Sorting_Algorithms
             {
                 double val = 1 + Math.Sin(a * i / array.Length + b);
 
-                array[i] = val * (maxHeight - minHeight) / 2 + minHeight;
+                array[i] = minBarVal + val * (maxBarVal - minBarVal) / 2;
             }
-        }
-
-        private void AssignArrayValues()
-        {
-            if (RandomValueCheck == null)
-            {
-                AssignLinearArrayValues();
-            }
-            else
-            {
-                if ((bool)RandomValueCheck.IsChecked)
-                {
-                    AssignRandomArrayValues();
-                }
-                else if ((bool)ExpValueCheck.IsChecked)
-                {
-                    AssignExpArrayValues();
-                }
-                else if ((bool)LogValueCheck.IsChecked)
-                {
-                    AssignLogArrayValues();
-                }
-                else
-                {
-                    AssignLinearArrayValues();
-                }
-            }
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                if (Lines[i] == null)
-                {
-                    Lines[i] = new Line();
-                }
-
-                Lines[i].Y1 = this.Height - 39;
-                Lines[i].Y2 = Lines[i].Y1 - array[i];
-            }
-        }
-
-        private void RandomValueCheck_Checked(object sender, RoutedEventArgs e)
-        {
-            AssignArrayValues();
-            Draw(-1, -1);
         }
 
         private void LinearValueCheck_Checked(object sender, RoutedEventArgs e)
         {
-            AssignArrayValues();
-            Draw(-1, -1);
-        }
-
-        private void ExpValueCheck_Checked(object sender, RoutedEventArgs e)
-        {
-            AssignArrayValues();
-            Draw(-1, -1);
-        }
-
-        private void LogValueCheck_Checked(object sender, RoutedEventArgs e)
-        {
-            AssignArrayValues();
-            Draw(-1, -1);
+            InitialiseArray();
+            InitialiseLines();
         }
 
         #endregion
@@ -542,7 +483,13 @@ namespace Sorting_Algorithms
                 Swap(i, j);
             }
 
-            Draw(-1, -1);
+            DrawBlank();
+        }
+
+        private void DrawBlank()
+        {
+            // draws without coloured bars
+            Draw(-1, -1, -1);
         }
 
         #endregion
@@ -575,8 +522,36 @@ namespace Sorting_Algorithms
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            InitialiseBarsAndLines();
-            SortButtonsScroller.Height = this.Height - 42;
+            if (!isWindowMaximised())
+            {
+                currHeight = this.Height;
+                currWidth = this.Width;
+            }
+
+            InitialiseLines();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            switch (this.WindowState)
+            {
+                case WindowState.Maximized:
+                    normalHeight = currHeight;
+                    normalWidth = currWidth;
+                    currHeight = maximisedHeight;
+                    currWidth = maximisedWidth;
+                    InitialiseLines();
+                    break;
+                case WindowState.Normal:
+                    currHeight = normalHeight;
+                    currWidth = normalWidth;
+                    break;
+            }
+        }
+
+        private bool isWindowMaximised()
+        {
+            return this.WindowState == WindowState.Maximized;
         }
     }
 }
