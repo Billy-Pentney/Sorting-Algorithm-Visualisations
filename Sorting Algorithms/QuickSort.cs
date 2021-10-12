@@ -27,17 +27,17 @@ namespace Sorting_Algorithms
 
         protected abstract void Dequeue();
 
-        public override int getIPointer()
+        public override int getI()
         {
             return currentStart;
         }
 
-        public override int getJPointer()
+        public override int getJ()
         {
             return currentEnd;
         }
 
-        public override int getKPointer()
+        public override int getK()
         {
             return pivotIndex;
         }
@@ -49,7 +49,7 @@ namespace Sorting_Algorithms
         {
         }
 
-        public override int getKPointer()
+        public override int getK()
         {
             return SortJ;
         }
@@ -94,7 +94,49 @@ namespace Sorting_Algorithms
             }
 
             return array;
+        }
 
+        public override double[] QuickRun()
+        {
+            while (currentStart < currentEnd)
+            {
+                bool firstCheck = array[SortI] < pivotValue;
+                bool secondCheck = array[SortJ] > pivotValue;
+
+                if (firstCheck)
+                    SortI++;
+
+                if (secondCheck)
+                    SortJ--;
+
+                comparisonCount += 2;
+
+                if (!(firstCheck || secondCheck))
+                {
+                    if (SortI >= SortJ)
+                    {
+                        queuedRegions.Enqueue(new int[] { currentStart, SortJ });
+                        queuedRegions.Enqueue(new int[] { SortJ + 1, currentEnd });
+
+                        Dequeue();
+                    }
+                    else
+                    {
+                        Swap(SortI, SortJ);
+                    }
+                }
+            }
+            
+            if (queuedRegions.Count > 0)
+            {
+                Dequeue();
+            }
+            else
+            {
+                isFinished = true;
+            }
+
+            return array;
         }
 
         protected override void Dequeue()
@@ -152,6 +194,45 @@ namespace Sorting_Algorithms
                 }
             }
             else if (queuedRegions.Count > 0)
+            {
+                Dequeue();
+            }
+            else
+            {
+                isFinished = true;
+            }
+
+            return array;
+
+        }
+
+        public override double[] QuickRun()
+        {
+            while (currentStart < currentEnd)
+            {
+                if (SortJ < currentEnd)
+                {
+                    if (array[SortJ] < pivotValue)
+                    {
+                        Swap(SortJ, pivotIndex);
+                        pivotIndex++;
+                    }
+
+                    comparisonCount++;
+                    SortJ++;
+                }
+                else
+                {
+                    Swap(pivotIndex, currentEnd);
+
+                    queuedRegions.Enqueue(new int[] { currentStart, pivotIndex - 1 });
+                    queuedRegions.Enqueue(new int[] { pivotIndex + 1, currentEnd });
+
+                    Dequeue();
+                }
+            }
+            
+            if (queuedRegions.Count > 0)
             {
                 Dequeue();
             }

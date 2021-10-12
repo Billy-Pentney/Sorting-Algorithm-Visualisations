@@ -50,6 +50,7 @@
                         <Button Name="MergeBtn" Content="Merge Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Merge Sort"></Button>
                         <Button Name="CycleBtn" Content="Cycle Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Cycle Sort"></Button>
                         <Button Name="PatienceSort" Content="Patience Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Patience Sort without Priority Queue"></Button>
+                        <Button Name="HeapSort" Content="Heap Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Heap Sort"></Button>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
@@ -86,5 +87,6 @@
         <Button Name="ShuffleBtn" Content="Shuffle" Canvas.Right="125" Height="25" Width="80" Click="ShuffleBtn_Click" Canvas.Top="15" ToolTip="Randomly order the current array"/>
         <Button Name="ReverseBtn" Content="Reverse" Canvas.Right="125" Canvas.Top="45" Height="25" Width="80" Click="ReverseBtn_Click" ToolTip="Reverse the current array order"/>
         <Button Name="StopBtn" BorderThickness="3" FontSize="16" FontFamily="Futura" Foreground="Red" IsEnabled="False" Content="STOP" Canvas.Right="15" Canvas.Top="15" Height="55" Width="105" Click="StopBtn_Click"></Button>
+        <CheckBox Name="FastChkBox" Content="Fast Run" Canvas.Left="480" Canvas.Top="77" Checked="FastChkBox_Checked" Unchecked="FastChkBox_Checked"/>
     </Canvas>
 </Window>

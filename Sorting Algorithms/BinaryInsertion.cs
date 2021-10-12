@@ -18,7 +18,7 @@ namespace Sorting_Algorithms
             IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
         }
 
-        public override int getKPointer()
+        public override int getK()
         {
             if (IndexToInsert < SortJ + 1)
                 return IndexToInsert;
@@ -46,6 +46,21 @@ namespace Sorting_Algorithms
                 SortJ = SortI - 1;
             }
 
+            isFinished = (SortI >= array.Length);
+
+            return array;
+        }
+
+        public override double[] QuickRun()
+        {
+            IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
+
+            for (SortJ = SortI - 1; SortJ > IndexToInsert - 1; SortJ--)
+            {
+                Swap(SortJ, SortJ + 1);
+            }
+
+            SortI++;
             isFinished = (SortI >= array.Length);
 
             return array;

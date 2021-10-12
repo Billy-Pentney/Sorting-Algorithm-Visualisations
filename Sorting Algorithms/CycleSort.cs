@@ -16,14 +16,13 @@ namespace Sorting_Algorithms
             pos = 0;
         }
 
-        public override int getIPointer()
+        public override int getK()
         {
             return pos;
         }
 
-        public override double[] Run()
+        public override double[] QuickRun()
         {
-            // FAST VERSION
             pos = SortI;
 
             for (int i = SortI + 1; i < array.Length; i++)
@@ -37,45 +36,44 @@ namespace Sorting_Algorithms
             {
                 comparisonCount++;
                 while (array[SortI] == array[pos])
-                {
                     pos++;
-                }
 
                 Swap(pos, SortI);
             }
 
             if (pos == SortI)
-            {
                 SortI++;
+
+            isFinished = (SortI >= array.Length - 1);
+
+            return array;
+        }
+
+        public override double[] Run()
+        {
+            if (SortJ < array.Length)
+            {
+                comparisonCount++;
+                if (array[SortJ] < array[SortI])
+                    pos++;
+                SortJ++;
             }
+            else
+            {
+                while (pos != SortI && array[SortI] == array[pos])
+                {
+                    comparisonCount++;
+                    pos++;
+                }
 
+                if (pos != SortI)
+                    Swap(pos, SortI);
+                else
+                    SortI++;
 
-            // SLOW VERSION
-            //if (SortJ < array.Length)
-            /*            {
-                            comparisonCount++;
-                            if (array[SortJ] < array[SortI])
-                                pos++;
-                            SortJ++;
-                        }
-                        else if (pos != SortI)
-                        {
-                            comparisonCount++;
-                            if (array[SortI] == array[pos]) 
-                                pos++;
-                        }
-                        else
-                        {
-                            Swap(SortI, pos);
-
-                            if (pos == SortI)
-                            {
-                                SortI++;
-                            }
-
-                            SortJ = SortI + 1;
-                            pos = SortI;
-                        }*/
+                SortJ = SortI + 1;
+                pos = SortI;
+            }
 
             isFinished = (SortI >= array.Length - 1);
 

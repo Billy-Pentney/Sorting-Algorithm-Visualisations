@@ -13,7 +13,7 @@ namespace Sorting_Algorithms
             fillGapWithColour = true;
         }
 
-        public override int getJPointer()
+        public override int getJ()
         {
             return SortJ + 1;
         }
@@ -32,6 +32,23 @@ namespace Sorting_Algorithms
             }
 
             comparisonCount++;
+            isFinished = (SortI >= array.Length);
+
+            return array;
+        }
+
+        public override double[] QuickRun()
+        {
+            for (SortJ = SortI - 1; SortJ > -1; SortJ--)
+            {
+                comparisonCount++;
+                if (array[SortJ] > array[SortJ + 1])
+                    Swap(SortJ, SortJ + 1);
+                else
+                    break;
+            }
+
+            SortI++;
             isFinished = (SortI >= array.Length);
 
             return array;

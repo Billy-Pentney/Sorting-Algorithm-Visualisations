@@ -52,5 +52,40 @@
 
             return array;
         }
+
+        public override double[] QuickRun()
+        {
+            swappedThisCycle = false;
+
+            for (SortJ = 0; SortJ + gap < maxIndex; SortJ++)
+            {
+                if (array[SortJ] > array[SortJ + gap])
+                {
+                    Swap(SortJ, SortJ + gap);
+                    swappedThisCycle = true;
+                }
+
+                comparisonCount++;
+            }
+
+            if (gap > comb_K)
+            {
+                gap = (int)(gap / comb_K);
+                SortI = 0;
+            }
+            else if (!swappedThisCycle)
+            {
+                SortI = array.Length;
+            }
+            else
+            {
+                maxIndex = SortJ;
+                SortI++;
+            }
+
+            isFinished = !swappedThisCycle || SortI >= array.Length;
+
+            return array;
+        }
     }
 }

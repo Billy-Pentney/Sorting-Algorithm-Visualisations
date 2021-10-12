@@ -39,11 +39,19 @@ namespace Sorting_Algorithms
 
         public bool getFillGap()
         {
+            // indicates whether the gap between the SortI and SortJ pointers should be filled or not
+            // default: false -> can be overridden depending on sort
             return fillGapWithColour;
         }
 
-        // performs next step of sort (called on a timer)
+        // performs next step of sort per function call (Slow)
         public abstract double[] Run();
+
+        // iterates several steps of sort per function call (Fast)
+        public virtual double[] QuickRun()
+        {
+            return Run();
+        }
 
         protected virtual void Swap(int a, int b)
         {
@@ -62,9 +70,9 @@ namespace Sorting_Algorithms
             return isFinished;
         }
 
-        public virtual int getIPointer() { return SortI; }
-        public virtual int getJPointer() { return SortJ; }
-        public virtual int getKPointer() { return -1; }
+        public virtual int getI() { return SortI; }
+        public virtual int getJ() { return SortJ; }
+        public virtual int getK() { return -1; }
 
         public int getComparisons() { return comparisonCount; }
         public int getSwaps() { return swapCount; }

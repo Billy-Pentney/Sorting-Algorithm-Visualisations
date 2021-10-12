@@ -59,6 +59,7 @@ namespace Sorting_Algorithms
         #endregion
 
         Sort currentSort;
+        bool fastRun = false;
 
         public MainWindow()
         {
@@ -100,16 +101,15 @@ namespace Sorting_Algorithms
         private void IterateSort()
         {
             // performs next iteration of the sort algorithm and displays the array afterwards
-            array = currentSort.Run();
+            if (fastRun)
+                array = currentSort.QuickRun();
+            else
+                array = currentSort.Run();
 
             if (currentSort.hasFinished())
-            {
                 Stop();
-            }
             else
-            {
-                Draw(currentSort.getIPointer(), currentSort.getJPointer(), currentSort.getKPointer());
-            }
+                Draw(currentSort.getI(), currentSort.getJ(), currentSort.getK());
         }
 
         private void Draw(int iPos, int jPos, int kPos)
@@ -259,6 +259,9 @@ namespace Sorting_Algorithms
                     break;
                 case "Patience Sort":
                     currentSort = new PatienceSort(array);
+                    break;
+                case "Heap Sort":
+                    currentSort = new HeapSort(array);
                     break;
                 default:
                     return;
@@ -552,6 +555,11 @@ namespace Sorting_Algorithms
         private bool isWindowMaximised()
         {
             return this.WindowState == WindowState.Maximized;
+        }
+
+        private void FastChkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            fastRun = (bool)FastChkBox.IsChecked;
         }
     }
 }

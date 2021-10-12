@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sorting_Algorithms
 {
@@ -22,6 +19,7 @@ namespace Sorting_Algorithms
 
         public override double[] Run()
         {
+            // adds each array element to the piles
             if (SortJ < array.Length)
             {
                 double curr = array[SortJ];
@@ -43,7 +41,6 @@ namespace Sorting_Algorithms
                 Stack<int> newPile = new Stack<int>();
                 newPile.Push(SortJ);
                 piles.Add(newPile);
-
                 SortJ++;
             }
             else if (SortI < array.Length)
@@ -70,7 +67,7 @@ namespace Sorting_Algorithms
 
                 // delete empty piles
                 if (pile.Count == 0)
-                    piles.RemoveAt(minPile);
+                    piles.Remove(pile);
 
                 SortI++;
             }

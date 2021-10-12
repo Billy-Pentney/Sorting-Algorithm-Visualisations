@@ -9,24 +9,6 @@
             this.gap = 1;
         }
 
-/*        public override int getIPointer()
-        {
-            if (gap > 0)
-            {
-                return SortI;
-            }
-            return SortJ;
-        }
-
-        public override int getJPointer()
-        {
-            if (gap > 0)
-            {
-                return SortJ;
-            }
-            return SortI;
-        }*/
-
         public override double[] Run()
         {
             if (SortJ + gap < array.Length - (SortI) && SortJ + gap >= SortI)
@@ -45,7 +27,7 @@
                 if (!swappedThisCycle)
                     SortI = array.Length;
 
-                gap += gap * -2;
+                gap = -gap;
                 swappedThisCycle = false;
 
                 if (gap > 0)
@@ -55,6 +37,31 @@
             {
                 isFinished = true;
             }
+
+            return array;
+        }
+
+        public override double[] QuickRun()
+        {
+            swappedThisCycle = false;
+
+            for (; SortJ + gap < array.Length - SortI && SortJ + gap >= SortI; SortJ += gap)
+            {
+                if (gap * array[SortJ] > gap * array[SortJ + gap])
+                {
+                    Swap(SortJ, SortJ + gap);
+                    swappedThisCycle = true;
+                }
+
+                comparisonCount++;
+            }
+
+            gap = -gap;
+
+            if (gap > 0)
+                SortI++;
+
+            isFinished = !swappedThisCycle || SortI >= array.Length - 1;
 
             return array;
         }

@@ -58,5 +58,37 @@ namespace Sorting_Algorithms
             comparisonCount++;
             return array;
         }
+
+        public override double[] QuickRun()
+        {
+            for (SortJ = SortI; SortJ - gap >= 0 && SortJ < array.Length; SortJ -= gap)
+            {
+                comparisonCount++;
+                if (array[SortJ] < array[SortJ - gap])
+                    Swap(SortJ, SortJ - gap);
+                else
+                {
+                    SortI += 1;
+                    SortJ = SortI + gap;
+                }
+            }
+
+            if (SortI < array.Length)
+            {
+                SortI += 1;
+                SortJ = SortI;
+            }
+            else if (gap > 1)
+            {
+                gap = (gap + 1) / 2 - 1;
+                SortI = gap;
+            }
+            else
+            {
+                isFinished = true;
+            }
+
+            return array;
+        }
     }
 }
