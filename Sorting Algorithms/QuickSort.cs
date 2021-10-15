@@ -10,8 +10,8 @@ namespace Sorting_Algorithms
     {
         protected Queue<int[]> queuedRegions = new Queue<int[]>();            //stores all pairs of values for which QuickSort still needs to be performed - if empty, the data is sorted
 
-        protected int currentEnd = 0;                                         //end of the current selection in QuickSort
-        protected int currentStart = 0;                                       //start of the current selection in QuickSort
+        protected int regionStart = 0;                                       //start of the current selection in QuickSort
+        protected int regionEnd = 0;                                         //end of the current selection in QuickSort
         protected int pivotIndex = 0;                                         //current index being compared to pivotValue in QuickSort
         protected double pivotValue = 0;                                      //pivot point for the current QuickSort
 
@@ -29,12 +29,12 @@ namespace Sorting_Algorithms
 
         public override int getI()
         {
-            return currentStart;
+            return regionStart;
         }
 
         public override int getJ()
         {
-            return currentEnd;
+            return regionEnd;
         }
 
         public override int getK()
@@ -56,85 +56,52 @@ namespace Sorting_Algorithms
 
         public override double[] Run()
         {
-            if (currentStart < currentEnd)
-            {
-                bool firstCheck = array[SortI] < pivotValue;
-                bool secondCheck = array[SortJ] > pivotValue;
-
-                if (firstCheck)
-                    SortI++;
-
-                if (secondCheck)
-                    SortJ--;
-
-                comparisonCount += 2;
-
-                if (!(firstCheck || secondCheck))
-                {
-                    if (SortI >= SortJ)
-                    {
-                        queuedRegions.Enqueue(new int[] { currentStart, SortJ });
-                        queuedRegions.Enqueue(new int[] { SortJ + 1, currentEnd });
-
-                        Dequeue();
-                    }
-                    else
-                    {
-                        Swap(SortI, SortJ);
-                    }
-                }
-            }
+            if (regionStart < regionEnd)
+                performCycle();
             else if (queuedRegions.Count > 0)
-            {
                 Dequeue();
-            }
             else
-            {
                 isFinished = true;
-            }
-
             return array;
+        }
+
+        public void performCycle()
+        {
+            bool pivotMoreThanFirst = array[SortI] < pivotValue;
+            bool pivotLessThanEnd = array[SortJ] > pivotValue;
+
+            if (pivotMoreThanFirst)
+                SortI++;
+
+            if (pivotLessThanEnd)
+                SortJ--;
+
+            comparisonCount += 2;
+
+            if (!(pivotMoreThanFirst || pivotLessThanEnd))
+            {
+                if (SortI >= SortJ)
+                {
+                    queuedRegions.Enqueue(new int[] { regionStart, SortJ });
+                    queuedRegions.Enqueue(new int[] { SortJ + 1, regionEnd });
+
+                    Dequeue();
+                }
+                else
+                    Swap(SortI, SortJ);
+            }
         }
 
         public override double[] QuickRun()
         {
-            while (currentStart < currentEnd)
-            {
-                bool firstCheck = array[SortI] < pivotValue;
-                bool secondCheck = array[SortJ] > pivotValue;
-
-                if (firstCheck)
-                    SortI++;
-
-                if (secondCheck)
-                    SortJ--;
-
-                comparisonCount += 2;
-
-                if (!(firstCheck || secondCheck))
-                {
-                    if (SortI >= SortJ)
-                    {
-                        queuedRegions.Enqueue(new int[] { currentStart, SortJ });
-                        queuedRegions.Enqueue(new int[] { SortJ + 1, currentEnd });
-
-                        Dequeue();
-                    }
-                    else
-                    {
-                        Swap(SortI, SortJ);
-                    }
-                }
+            while (regionStart < regionEnd) {
+                performCycle();
             }
             
             if (queuedRegions.Count > 0)
-            {
                 Dequeue();
-            }
             else
-            {
                 isFinished = true;
-            }
 
             return array;
         }
@@ -147,17 +114,17 @@ namespace Sorting_Algorithms
 
             do {
                 newIndices = queuedRegions.Dequeue();
-                currentStart = newIndices[0];
-                currentEnd = newIndices[1];
-            } while (currentStart >= currentEnd && queuedRegions.Count > 0);
+                regionStart = newIndices[0];
+                regionEnd = newIndices[1];
+            } while (regionStart >= regionEnd && queuedRegions.Count > 0);
 
-            pivotIndex = currentStart;
+            pivotIndex = regionStart;
 
-            if (currentStart < currentEnd)
+            if (regionStart < regionEnd)
             {
-                pivotValue = array[(currentEnd + currentStart) / 2];
-                SortI = currentStart;
-                SortJ = currentEnd;
+                pivotValue = array[(regionEnd + regionStart) / 2];
+                SortI = regionStart;
+                SortJ = regionEnd;
             }
         }
     }
@@ -170,9 +137,9 @@ namespace Sorting_Algorithms
 
         public override double[] Run()
         {
-            if (currentStart < currentEnd)
+            if (regionStart < regionEnd)
             {
-                if (SortJ < currentEnd)
+                if (SortJ < regionEnd)
                 {
                     if (array[SortJ] < pivotValue)
                     {
@@ -185,10 +152,10 @@ namespace Sorting_Algorithms
                 }
                 else
                 {
-                    Swap(pivotIndex, currentEnd);
+                    Swap(pivotIndex, regionEnd);
 
-                    queuedRegions.Enqueue(new int[] { currentStart, pivotIndex - 1 });
-                    queuedRegions.Enqueue(new int[] { pivotIndex + 1, currentEnd });
+                    queuedRegions.Enqueue(new int[] { regionStart, pivotIndex - 1 });
+                    queuedRegions.Enqueue(new int[] { pivotIndex + 1, regionEnd });
 
                     Dequeue();
                 }
@@ -208,9 +175,9 @@ namespace Sorting_Algorithms
 
         public override double[] QuickRun()
         {
-            while (currentStart < currentEnd)
+            while (regionStart < regionEnd)
             {
-                if (SortJ < currentEnd)
+                if (SortJ < regionEnd)
                 {
                     if (array[SortJ] < pivotValue)
                     {
@@ -223,10 +190,10 @@ namespace Sorting_Algorithms
                 }
                 else
                 {
-                    Swap(pivotIndex, currentEnd);
+                    Swap(pivotIndex, regionEnd);
 
-                    queuedRegions.Enqueue(new int[] { currentStart, pivotIndex - 1 });
-                    queuedRegions.Enqueue(new int[] { pivotIndex + 1, currentEnd });
+                    queuedRegions.Enqueue(new int[] { regionStart, pivotIndex - 1 });
+                    queuedRegions.Enqueue(new int[] { pivotIndex + 1, regionEnd });
 
                     Dequeue();
                 }
@@ -254,16 +221,16 @@ namespace Sorting_Algorithms
             do
             {
                 newIndices = queuedRegions.Dequeue();
-                currentStart = newIndices[0];
-                currentEnd = newIndices[1];
-            } while (currentStart >= currentEnd && queuedRegions.Count > 0);
+                regionStart = newIndices[0];
+                regionEnd = newIndices[1];
+            } while (regionStart >= regionEnd && queuedRegions.Count > 0);
 
-            SortJ = currentStart;
-            pivotIndex = currentStart;
+            SortJ = regionStart;
+            pivotIndex = regionStart;
 
-            if (currentStart < currentEnd)
+            if (regionStart < regionEnd)
             {
-                pivotValue = array[currentEnd];
+                pivotValue = array[regionEnd];
             }
         }
     }
@@ -278,20 +245,20 @@ namespace Sorting_Algorithms
         {
             base.Dequeue();
 
-            if (currentStart < currentEnd)
+            if (regionStart < regionEnd)
             {
-                int mid = (currentStart + currentEnd) / 2;
+                int mid = (regionStart + regionEnd) / 2;
 
-                if (array[mid] < array[currentStart])
-                    Swap(currentStart, mid);
+                if (array[mid] < array[regionStart])
+                    Swap(regionStart, mid);
 
-                if (array[currentEnd] < array[currentStart])
-                    Swap(currentStart, currentEnd);
+                if (array[regionEnd] < array[regionStart])
+                    Swap(regionStart, regionEnd);
 
-                if (array[mid] < array[currentEnd])
-                    Swap(mid, currentEnd);
+                if (array[mid] < array[regionEnd])
+                    Swap(mid, regionEnd);
 
-                pivotValue = array[currentEnd];
+                pivotValue = array[regionEnd];
             }
         }
     }
