@@ -4,22 +4,24 @@ A simple WPF C# App which demonstrates a variety of common sorting algorithms us
 Its primary purpose is for understanding the function and relative efficiency of each sort and to help highlight the advantages and disadvantages of each algorithm.
 
 Current Algorithms:
-  - Bubble Sorts
+  - Bubble
     - Standard Bubble Sort
     - Cocktail Shaker Sort
     - Comb Sort
-  - Insertion Sorts
+  - Insertion
     - Standard Insertion Sort
     - Binary Insertion
-  - Selection Sorts
+  - Selection
     - Selection Sort
     - Double Selection Sort
     - Shell Sort
-  - Quick Sort
+  - Quick
     - w/ Lomuto Partitioning
     - w/ Hoare Partitioning
     - w/ Lomuto Median Partitioning
-  - Other Sorts
+  - Heap
+    - Standard Heap Sort with Max Heap
+  - Other
     - Merge Sort
     - Cycle Sort
     - Patience Sort
