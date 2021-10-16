@@ -21,6 +21,9 @@ Current Algorithms:
     - w/ Lomuto Median Partitioning
   - Heap
     - Standard Heap Sort with Max Heap
+  - Hybrid/Combinations
+    - Intro Sort (using Insertion and Heap)
+    - Binary Intro Sort (using Binary Insertion and Heap)
   - Other
     - Merge Sort
     - Cycle Sort
@@ -33,5 +36,5 @@ Example:
 Currently, the program can sort on:
   - Randomly-generated values 
   - Linearly Interpolated values (constant difference between terms)
-  - Exponential values (i.e. Negatively Skew, producing more "small" values)
-  - Logarithmic values (i.e. Positively Skew, producing more "large" values)
+  - Exponential values (i.e. more "small" values, fewer "large" values)
+  - Logarithmic values (i.e. fewer "small" values, more "large" values)
