@@ -13,7 +13,7 @@ namespace Sorting_Algorithms
         public CycleSort(double[] array) : base(array)
         {
             SortJ = SortI + 1;
-            pos = 0;
+            pos = min;
         }
 
         public override int getK()
@@ -25,17 +25,15 @@ namespace Sorting_Algorithms
         {
             pos = SortI;
 
-            for (int i = SortI + 1; i < array.Length; i++)
+            for (int i = SortI + 1; i <= max; i++)
             {
-                comparisonCount++;
-                if (array[i] < array[SortI])
+                if (Compare(i, SortI) < 0)
                     pos++;
             }
 
             if (pos != SortI)
             {
-                comparisonCount++;
-                while (array[SortI] == array[pos])
+                while (Compare(SortI, pos) == 0)
                     pos++;
 
                 Swap(pos, SortI);
@@ -44,25 +42,23 @@ namespace Sorting_Algorithms
             if (pos == SortI)
                 SortI++;
 
-            isFinished = (SortI >= array.Length - 1);
+            isFinished = (SortI >= max);
 
             return array;
         }
 
         public override double[] Run()
         {
-            if (SortJ < array.Length)
+            if (SortJ <= max)
             {
-                comparisonCount++;
-                if (array[SortJ] < array[SortI])
+                if (Compare(SortJ, SortI) < 0)
                     pos++;
                 SortJ++;
             }
             else
             {
-                while (pos != SortI && array[SortI] == array[pos])
+                while (pos != SortI && Compare(SortI, pos) == 0)
                 {
-                    comparisonCount++;
                     pos++;
                 }
 
@@ -75,7 +71,7 @@ namespace Sorting_Algorithms
                 pos = SortI;
             }
 
-            isFinished = (SortI >= array.Length - 1);
+            isFinished = (SortI >= max);
 
             return array;
         }

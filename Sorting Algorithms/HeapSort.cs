@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sorting_Algorithms
 {
     class HeapSort : Sort
     {
         /*
-            each element a at index i has
+            each element at index i has
             children at indices 2i + 1 and 2i + 2
             its parent at index floor((i − 1) ∕ 2)
         */
@@ -26,9 +23,17 @@ namespace Sorting_Algorithms
         public HeapSort(double[] array) : base(array)
         {
             root = 0;
-            SortJ = this.array.Length - 1;
-            SortI = this.array.Length;
+            SortJ = max;
+            SortI = max + 1;
             MODE = CREATE_HEAP;
+        }
+
+        public override void setBounds(int min, int max)
+        {
+            base.setBounds(min, max);
+            SortJ = max;
+            SortI = max + 1;
+            root = min;
         }
 
         public void heapify(int i, bool recurse)
@@ -36,14 +41,13 @@ namespace Sorting_Algorithms
             largest = i;
             int left = iLeftChild(i);
             int right = iRightChild(i);
-            int len = array.Length;
 
             // if left node is larger
-            if (left > -1 && left < len && array[left] > array[largest])
+            if (left >= min && left <= max && array[left] > array[largest])
                 largest = left;
 
             // if right node is larger
-            if (right > -1 && right < len && array[right] > array[largest])
+            if (right > min && right <= max && array[right] > array[largest])
                 largest = right;
 
             comparisonCount += 2;
@@ -77,7 +81,6 @@ namespace Sorting_Algorithms
         {
             if (MODE == CREATE_HEAP)
                 return largest;
-
             return SortJ;
         }
 
@@ -121,7 +124,7 @@ namespace Sorting_Algorithms
             {
                 if (heapifyQueue.Count > 0)
                     heapify(heapifyQueue.Dequeue(), false);
-                else if (SortI > 0)
+                else if (SortI > min)
                     heapify(--SortI, false);
                 else
                     MODE = BETWEEN_SIFTS;
@@ -149,7 +152,7 @@ namespace Sorting_Algorithms
                 do
                 {
                     heapify(--SortI, true);
-                } while (SortI > 0);
+                } while (SortI > min);
                 MODE = SIFT_HEAP;
             }
 

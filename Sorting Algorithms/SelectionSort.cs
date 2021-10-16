@@ -1,71 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting_Algorithms
+﻿namespace Sorting_Algorithms
 {
     class SelectionSort : Sort
     {
-        protected int minIndex;
+        protected int indexOfMin;
 
         public SelectionSort(double[] array) : base(array)
         {
-            SortI = 0;
-            minIndex = SortI;
-            SortJ = minIndex + 1;
+            SortI = min;
+            indexOfMin = SortI;
+            SortJ = indexOfMin + 1;
         }
 
         public override int getK()
         {
-            return minIndex;
+            return indexOfMin;
         }
 
         public override double[] Run()
         {
-            if (SortJ < array.Length && SortJ > minIndex)
+            if (SortJ <= max && SortJ > indexOfMin)
             {
-                //finds smallest instance in array
+                //finds index of smallest element in array
+                if (Compare(SortJ, indexOfMin) < 0)
+                    indexOfMin = SortJ;
 
-                if (array[SortJ] < array[minIndex])
-                {
-                    minIndex = SortJ;
-                }
-
-                comparisonCount++;
                 SortJ++;
             }
-            else if (SortI < array.Length)
+            else if (SortI <= max)
             {
-                Swap(SortI, minIndex);
+                Swap(SortI, indexOfMin);
 
                 SortI++;
-                minIndex = SortI;
-                SortJ = minIndex + 1;
+                indexOfMin = SortI;
+                SortJ = indexOfMin + 1;
             }
 
-            isFinished = (SortI >= array.Length);
+            isFinished = (SortI > max);
 
             return array;
         }
 
         public override double[] QuickRun()
         {
-            for (SortJ = SortI; SortJ < array.Length; SortJ++)
+            for (SortJ = SortI; SortJ <= max; SortJ++)
             {
-                if (array[SortJ] < array[minIndex])
-                    minIndex = SortJ;
-
-                comparisonCount++;
+                if (Compare(SortJ, indexOfMin) < 0)
+                    indexOfMin = SortJ;
             }
 
-            Swap(SortI, minIndex);
+            Swap(SortI, indexOfMin);
 
             SortI++;
-            minIndex = SortI;
+            indexOfMin = SortI;
 
-            isFinished = (SortI >= array.Length);
+            isFinished = (SortI > max);
 
             return array;
         }

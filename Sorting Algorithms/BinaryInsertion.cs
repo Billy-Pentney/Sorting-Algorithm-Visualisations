@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting_Algorithms
+﻿namespace Sorting_Algorithms
 {
     class BinaryInsertion : InsertionSort
     {
@@ -12,10 +6,14 @@ namespace Sorting_Algorithms
 
         public BinaryInsertion(double[] array) : base(array)
         {
-            //if this breaks, use SortI = 0, and IndexToInsert = SortI;
-            SortI = 1;
-            SortJ = 0;
-            IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
+        }
+
+        public override void setBounds(int min, int max)
+        {
+            base.setBounds(min, max);
+            SortI = min;
+            SortJ = SortI + 1;
+            IndexToInsert = BinarySearchForSpace(SortI, min, SortI);
         }
 
         public override int getK()
@@ -40,20 +38,20 @@ namespace Sorting_Algorithms
                     IndexToInsert = SortI;
                 }
             }
-            else if (++SortI < array.Length)
+            else if (++SortI <= max)
             {
-                IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
+                IndexToInsert = BinarySearchForSpace(SortI, min, SortI);
                 SortJ = SortI - 1;
             }
 
-            isFinished = (SortI >= array.Length);
+            isFinished = SortI > max;
 
             return array;
         }
 
         public override double[] QuickRun()
         {
-            IndexToInsert = BinarySearchForSpace(SortI, 0, SortI);
+            IndexToInsert = BinarySearchForSpace(SortI, min, SortI);
 
             for (SortJ = SortI - 1; SortJ > IndexToInsert - 1; SortJ--)
             {
@@ -61,29 +59,27 @@ namespace Sorting_Algorithms
             }
 
             SortI++;
-            isFinished = (SortI >= array.Length);
+            isFinished = SortI > max;
 
             return array;
         }
 
-        private int BinarySearchForSpace(int toInsert, int min, int max)
+        private int BinarySearchForSpace(int toInsert, int low, int high)
         {
             int mid;
 
             ///applies binary search to find index where element should be located
-            while (min < max)
+            while (low < high)
             {
-                mid = min + (max - min) / 2;
+                mid = low + (high - low) / 2;
 
-                if (array[toInsert] >= array[mid])
-                    min = mid + 1;
+                if (Compare(toInsert, mid) >= 0)
+                    low = mid + 1;
                 else
-                    max = mid;
-
-                comparisonCount++;
+                    high = mid;
             }
 
-            return min;
+            return low;
         }
     }
 }

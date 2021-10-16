@@ -6,15 +6,14 @@
 
         public override double[] Run()
         {
-            if (SortJ + 1 < array.Length - SortI)
+            if (SortJ + 1 <= max - SortI)
             {
-                if (array[SortJ] > array[SortJ + 1])
+                if (Compare(SortJ, SortJ + 1) > 0)
                 {
                     Swap(SortJ, SortJ + 1);
                     swappedThisCycle = true;
                 }
 
-                comparisonCount++;
                 SortJ++;
             }
             else
@@ -24,11 +23,11 @@
                     SortI = array.Length;
 
                 swappedThisCycle = false;
-                SortJ = 0;
+                SortJ = min;
                 SortI++;
             }
 
-            isFinished = (SortI >= array.Length);
+            isFinished = SortI > max;
 
             return array;
         }
@@ -37,19 +36,17 @@
         {
             swappedThisCycle = false;
 
-            for (SortJ = 0; SortJ + 1 < array.Length - SortI; SortJ++)
+            for (SortJ = 0; SortJ + 1 <= max - SortI; SortJ++)
             {
-                if (array[SortJ] > array[SortJ + 1])
+                if (Compare(SortJ, SortJ+1) > 0)
                 {
                     Swap(SortJ, SortJ + 1);
                     swappedThisCycle = true;
                 }
-
-                comparisonCount++;
             }
 
             SortI++;
-            isFinished = !swappedThisCycle || SortI >= array.Length;
+            isFinished = !swappedThisCycle || SortI > max;
             // early exit if no swaps performed on a pass
 
             return array;

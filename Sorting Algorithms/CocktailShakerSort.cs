@@ -2,7 +2,7 @@
 {
     class CocktailShakerSort : Sort
     {
-        protected int gap;
+        protected int gap;      // the gap between the elements currently being compared
 
         public CocktailShakerSort(double[] array) : base(array)
         {
@@ -11,21 +11,20 @@
 
         public override double[] Run()
         {
-            if (SortJ + gap < array.Length - (SortI) && SortJ + gap >= SortI)
+            if (SortJ+gap <= max-SortI && SortJ+gap >= SortI)
             {
-                if (gap * array[SortJ] > gap * array[SortJ + gap])
+                if (Compare(SortJ, SortJ+gap) > 0)
                 {
                     Swap(SortJ, SortJ + gap);
                     swappedThisCycle = true;
                 }
 
-                comparisonCount++;
                 SortJ += gap;
             }
-            else if (SortI < array.Length - 1)
+            else if (SortI < max)
             {
                 if (!swappedThisCycle)
-                    SortI = array.Length;
+                    SortI = max + 1;
 
                 gap = -gap;
                 swappedThisCycle = false;
@@ -45,9 +44,9 @@
         {
             swappedThisCycle = false;
 
-            for (; SortJ + gap < array.Length - SortI && SortJ + gap >= SortI; SortJ += gap)
+            for (; SortJ + gap <= max - SortI && SortJ + gap >= SortI; SortJ += gap)
             {
-                if (gap * array[SortJ] > gap * array[SortJ + gap])
+                if (Compare(SortJ, SortJ+gap) > 0)
                 {
                     Swap(SortJ, SortJ + gap);
                     swappedThisCycle = true;
@@ -58,12 +57,20 @@
 
             gap = -gap;
 
-            if (gap > 0)
+            if (gap > min)
                 SortI++;
 
-            isFinished = !swappedThisCycle || SortI >= array.Length - 1;
+            isFinished = !swappedThisCycle || SortI >= max;
 
             return array;
+        }
+
+        protected override int Compare(int a, int b)
+        {
+            // when moving up the list, gap > 0
+            // when moving down the list, gap < 0
+            // multiplying by gap, ensures the elements are compared correctly
+            return base.Compare(a,b) * gap;
         }
     }
 }

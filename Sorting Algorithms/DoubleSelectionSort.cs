@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting_Algorithms
+﻿namespace Sorting_Algorithms
 {
     class DoubleSelectionSort : SelectionSort
     {
-        private int maxIndex;
+        private int indexOfMax;
 
         public DoubleSelectionSort(double[] array) : base(array)
         {
-            maxIndex = array.Length - SortI - 1;
+            indexOfMax = max - SortI - 1;
         }
 
         public override double[] Run()
@@ -20,88 +14,83 @@ namespace Sorting_Algorithms
             if (SortJ < array.Length - SortI)
             {
                 //finds minimum value
-                if (array[SortJ] < array[minIndex])
-                    minIndex = SortJ;
+                if (Compare(SortJ, indexOfMin) < 0)
+                    indexOfMin = SortJ;
                 // finds maximum value
-                if (array[array.Length - SortJ - 1] > array[maxIndex])
-                    maxIndex = array.Length - SortJ - 1;
+                if (Compare(max-SortJ, indexOfMax) > 0)
+                    indexOfMax = array.Length - SortJ - 1;
 
-                comparisonCount += 2;
                 SortJ++;
             }
             else
             {
                 int firstSwapPos = SortI;
-                int secondSwapPos = array.Length - SortI - 1;
+                int secondSwapPos = max - SortI;
 
-                if (minIndex != maxIndex)
+                if (indexOfMin != indexOfMax)
                 {
-                    Swap(firstSwapPos, minIndex);
+                    Swap(firstSwapPos, indexOfMin);
 
-                    if (maxIndex == firstSwapPos)
-                    {
-                        maxIndex = minIndex;
-                        //if the maximum is moved by the first swap, then its index must be known
-                    }
+                    // if the maximum is moved by the first swap, then we know what index it is
+                    if (indexOfMax == firstSwapPos)
+                        indexOfMax = indexOfMin;
 
-                    Swap(secondSwapPos, maxIndex);
+                    Swap(secondSwapPos, indexOfMax);
                 }
                 else
                 {
-                    //min and max are in each other's spaces
-                    Swap(minIndex, maxIndex);
+                    // min and max need to be swapped
+                    Swap(indexOfMin, indexOfMax);
                 }
 
                 SortI++;
-                minIndex = SortI;
-                maxIndex = array.Length - SortI - 1;
-                SortJ = minIndex + 1;
+                indexOfMin = SortI;
+                indexOfMax = max - SortI;
+                SortJ = indexOfMin + 1;
             }
             
-            isFinished = (SortI >= array.Length / 2);
+            isFinished = (SortI > max / 2);
 
             return array;
         }
 
         public override double[] QuickRun()
         {
-            for (SortJ = SortI; SortJ < array.Length - SortI; SortJ++)
+            for (SortJ = SortI; SortJ <= max - SortI; SortJ++)
             {
                 // finds minimum value
-                if (array[SortJ] < array[minIndex])
-                    minIndex = SortJ;
+                if (Compare(SortJ, indexOfMin) < 0)
+                    indexOfMin = SortJ;
                 // finds maximum value
-                if (array[array.Length - SortJ - 1] > array[maxIndex])
-                    maxIndex = array.Length - SortJ - 1;
-
-                comparisonCount += 2;
+                if (Compare(max-SortJ, indexOfMax) > 0)
+                    indexOfMax = max - SortJ;
             }
 
             int firstSwapPos = SortI;
-            int secondSwapPos = array.Length - SortI - 1;
+            int secondSwapPos = max - SortI;
 
-            if (minIndex != maxIndex)
+            if (indexOfMin != indexOfMax)
             {
-                Swap(firstSwapPos, minIndex);
+                Swap(firstSwapPos, indexOfMin);
 
-                if (maxIndex == firstSwapPos)
-                    maxIndex = minIndex;
+                if (indexOfMax == firstSwapPos)
+                    indexOfMax = indexOfMin;
                     //if the maximum is moved by the first swap, then its index must be known
 
-                Swap(secondSwapPos, maxIndex);
+                Swap(secondSwapPos, indexOfMax);
             }
             else
             {
-                //min and max are in each other's spaces
-                Swap(minIndex, maxIndex);
+                // min and max need to be swapped
+                Swap(indexOfMin, indexOfMax);
             }
 
             SortI++;
-            minIndex = SortI;
-            maxIndex = array.Length - SortI - 1;
-            SortJ = minIndex + 1;
+            indexOfMin = SortI;
+            indexOfMax = max - SortI;
+            SortJ = indexOfMin + 1;
 
-            isFinished = (SortI >= array.Length / 2);
+            isFinished = (SortI > max / 2);
 
             return array;
         }

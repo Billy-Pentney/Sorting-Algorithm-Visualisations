@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -173,6 +171,7 @@ namespace Sorting_Algorithms
             SelectionGroup.IsEnabled = state;
             QuickSortGroup.IsEnabled = state;
             HeapSortsGroup.IsEnabled = state;
+            HybridSortsGroup.IsEnabled = state;
             OtherSortsGroup.IsEnabled = state;
 
             FastChkBox.IsEnabled = state;
@@ -233,6 +232,12 @@ namespace Sorting_Algorithms
                     break;
                 case "Heap Sort":
                     currentSort = new HeapSort(array);
+                    break;
+                case "Intro Sort":
+                    currentSort = new IntroSort(array);
+                    break;
+                case "Binary Intro Sort":
+                    currentSort = new BinaryIntroSort(array);
                     break;
                 default:
                     return;

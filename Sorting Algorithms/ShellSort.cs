@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting_Algorithms
+﻿namespace Sorting_Algorithms
 {
     class ShellSort : Sort
     {
@@ -14,7 +8,7 @@ namespace Sorting_Algorithms
         {
             fillGapWithColour = true;
             gap = 1;
-            while (gap < array.Length / 2)
+            while (gap <= max / 2)
             {
                 //gap = gap * 3 + 1;
                 gap = (gap + 1) * 2 - 1;
@@ -22,12 +16,10 @@ namespace Sorting_Algorithms
         }
         public override double[] Run()
         {
-            if (SortJ - gap >= 0 && SortJ < array.Length)
+            if (SortJ - gap >= min && SortJ <= max)
             {
-                if (array[SortJ] < array[SortJ - gap])
-                {
+                if (Compare(SortJ, SortJ-gap) < 0)
                     Swap(SortJ, SortJ - gap);
-                }
                 else
                 {
                     SortI += 1;
@@ -35,7 +27,7 @@ namespace Sorting_Algorithms
                 }
                 SortJ -= gap;
             }
-            else if (SortI < array.Length)
+            else if (SortI <= max)
             {
                 SortI += 1;
                 SortJ = SortI;
@@ -47,7 +39,7 @@ namespace Sorting_Algorithms
 
                 //2^k - 1, starting at 1
                 gap = (gap + 1) / 2 - 1;
-                SortI = gap;
+                SortI = min + gap;
                 SortJ = SortI;
             }
             else
@@ -61,10 +53,9 @@ namespace Sorting_Algorithms
 
         public override double[] QuickRun()
         {
-            for (SortJ = SortI; SortJ - gap >= 0 && SortJ < array.Length; SortJ -= gap)
+            for (SortJ = SortI; SortJ - gap >= min && SortJ <= max; SortJ -= gap)
             {
-                comparisonCount++;
-                if (array[SortJ] < array[SortJ - gap])
+                if (Compare(SortJ, SortJ-gap) < 0)
                     Swap(SortJ, SortJ - gap);
                 else
                 {
@@ -73,7 +64,7 @@ namespace Sorting_Algorithms
                 }
             }
 
-            if (SortI < array.Length)
+            if (SortI <= max)
             {
                 SortI += 1;
                 SortJ = SortI;
@@ -81,12 +72,10 @@ namespace Sorting_Algorithms
             else if (gap > 1)
             {
                 gap = (gap + 1) / 2 - 1;
-                SortI = gap;
+                SortI = min + gap;
             }
             else
-            {
                 isFinished = true;
-            }
 
             return array;
         }

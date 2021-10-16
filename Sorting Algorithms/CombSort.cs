@@ -2,53 +2,46 @@
 {
     class CombSort : Sort
     {
-        private int maxIndex;
-        private int gap;
-        private const double comb_K = 1.3;
+        private int gap;    // gap between the elements being compared
+        private const double comb_K = 1.3;      // constant factor used to adjust gap
 
         public CombSort(double[] array) : base(array)
         {
-            maxIndex = array.Length;
-            gap = (int)(array.Length / comb_K);
+            gap = (int)(max + 1 / comb_K);
         }
 
         public override double[] Run()
         {
-            if (SortJ + gap < maxIndex)
+            if (SortJ + gap <= max)
             {
-                if (array[SortJ] > array[SortJ + gap])
+                if (Compare(SortJ, SortJ+gap) > 0)
                 {
                     Swap(SortJ, SortJ + gap);
                     swappedThisCycle = true;
                 }
 
-                comparisonCount++;
                 SortJ += gap;
             }
-            else if (SortI < array.Length)
+            else if (SortI <= max)
             {
                 if (gap > comb_K)
                 {
                     gap = (int)(gap / comb_K);
-                    SortI = 0;
+                    SortI = min;
                 }
                 else if (!swappedThisCycle)
-                {
-                    SortI = array.Length;
-                }
+                    SortI = max + 1;
                 else
                 {
-                    maxIndex = SortJ;
+                    max = SortJ - 1;
                     SortI++;
                 }
 
                 swappedThisCycle = false;
-                SortJ = 0;
+                SortJ = min;
             }
             else
-            {
                 isFinished = true;
-            }
 
             return array;
         }
@@ -57,33 +50,29 @@
         {
             swappedThisCycle = false;
 
-            for (SortJ = 0; SortJ + gap < maxIndex; SortJ++)
+            for (SortJ = 0; SortJ + gap <= max; SortJ++)
             {
-                if (array[SortJ] > array[SortJ + gap])
+                if (Compare(SortJ, SortJ+gap) > 0)
                 {
-                    Swap(SortJ, SortJ + gap);
+                    Swap(SortJ, SortJ+gap);
                     swappedThisCycle = true;
                 }
-
-                comparisonCount++;
             }
 
             if (gap > comb_K)
             {
                 gap = (int)(gap / comb_K);
-                SortI = 0;
+                SortI = min;
             }
             else if (!swappedThisCycle)
-            {
-                SortI = array.Length;
-            }
+                SortI = max + 1;
             else
             {
-                maxIndex = SortJ;
+                max = SortJ - 1;
                 SortI++;
             }
 
-            isFinished = !swappedThisCycle || SortI >= array.Length;
+            isFinished = !swappedThisCycle || SortI > max;
 
             return array;
         }

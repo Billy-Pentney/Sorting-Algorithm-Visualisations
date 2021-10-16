@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorting_Algorithms
+﻿namespace Sorting_Algorithms
 {
     class InsertionSort : Sort
     {
@@ -13,43 +7,47 @@ namespace Sorting_Algorithms
             fillGapWithColour = true;
         }
 
+        public override void setBounds(int min, int max)
+        {
+            base.setBounds(min, max);
+            SortI = min+1;
+            SortJ = SortI;
+        }
+
         public override int getJ()
         {
-            return SortJ + 1;
+            return SortJ;
         }
 
         public override double[] Run()
         {
-            if (SortJ >= 0 && array[SortJ] > array[SortJ + 1])
+            if (SortJ > min && SortJ <= max && Compare(SortJ-1, SortJ) > 0)
             {
-                Swap(SortJ, SortJ + 1);
+                Swap(SortJ-1, SortJ);
                 SortJ -= 1;
             }
-            else
+            else if (++SortI <= max)
             {
-                SortI++;
-                SortJ = SortI - 1;
+                SortJ = SortI;
             }
-
-            comparisonCount++;
-            isFinished = (SortI >= array.Length);
+            else
+                isFinished = true;
 
             return array;
         }
 
         public override double[] QuickRun()
         {
-            for (SortJ = SortI - 1; SortJ > -1; SortJ--)
+            for (SortJ = SortI - 1; SortJ >= min; SortJ--)
             {
-                comparisonCount++;
-                if (array[SortJ] > array[SortJ + 1])
+                if (Compare(SortJ, SortJ+1) > 0)
                     Swap(SortJ, SortJ + 1);
                 else
                     break;
             }
 
             SortI++;
-            isFinished = (SortI >= array.Length);
+            isFinished = SortI > max;
 
             return array;
         }

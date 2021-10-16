@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Sorting_Algorithms
 {
@@ -20,7 +19,7 @@ namespace Sorting_Algorithms
         public override double[] Run()
         {
             // adds each array element to the piles
-            if (SortJ < array.Length)
+            if (SortJ <= max)
             {
                 double curr = array[SortJ];
 
@@ -43,7 +42,7 @@ namespace Sorting_Algorithms
                 piles.Add(newPile);
                 SortJ++;
             }
-            else if (SortI < array.Length)
+            else if (SortI <= max)
             {
                 int minPile = 0;
                 double minCard = -1;

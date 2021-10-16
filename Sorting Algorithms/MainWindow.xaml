@@ -61,6 +61,13 @@
                     </StackPanel>
                 </GroupBox>
 
+                <GroupBox Name="HybridSortsGroup" Header="Hybrid Sorts" Margin="10,10,10,0" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2">
+                    <StackPanel Margin="2">
+                        <Button Name="IntroSort" Content="Intro Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Intro Sort"></Button>
+                        <Button Name="IntroBinarySort" Content="Binary Intro Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Intro Sort with Binary Insertion"></Button>
+                    </StackPanel>
+                </GroupBox>
+
                 <GroupBox Name="OtherSortsGroup" Header="Other Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2">
                     <StackPanel Margin="2">
                         <Button Name="MergeBtn" Content="Merge Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Merge Sort"></Button>
