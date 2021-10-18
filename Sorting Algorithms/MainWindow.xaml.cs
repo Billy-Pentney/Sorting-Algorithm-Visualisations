@@ -11,14 +11,13 @@ namespace Sorting_Algorithms
     public partial class MainWindow : Window
     {
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 100, 100));
-        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(250, 250, 80));
-        SolidColorBrush green = new SolidColorBrush(Color.FromRgb(100, 250, 100));
-        SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(100, 100, 255));
-        SolidColorBrush d_blue = new SolidColorBrush(Color.FromRgb(150, 175, 230));
-
-        Brush appBkg = Brushes.White;
-        Brush appFrg = Brushes.Black;
-        Brush borderColour = Brushes.Gray;
+        SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 255, 175));
+        SolidColorBrush green = new SolidColorBrush(Color.FromRgb(100, 255, 100));
+        SolidColorBrush blue = new SolidColorBrush(Color.FromRgb(50, 175, 255));
+        SolidColorBrush light_blue = new SolidColorBrush(Color.FromRgb(175, 220, 255));
+        SolidColorBrush orange = new SolidColorBrush(Color.FromRgb(255, 210, 160));
+        SolidColorBrush pink = new SolidColorBrush(Color.FromRgb(255, 175, 220));
+        SolidColorBrush lilac = new SolidColorBrush(Color.FromRgb(220, 175, 255));
 
         #region Variables
 
@@ -37,7 +36,7 @@ namespace Sorting_Algorithms
 
         int numOfElements = 10;                                     //number of values/lines to sort
         const int minElements = 10;
-        const int maxElements = 200;
+        const int maxElements = 250;
 
         #endregion
 
@@ -53,6 +52,9 @@ namespace Sorting_Algorithms
 
             SortTimer.Interval = new TimeSpan(0, 0, 0, 0, 30);
             SortTimer.Tick += SortTimer_Tick;
+
+            BarCountSlider.Maximum = maxElements;
+            BarCountSlider.Minimum = minElements;
         }
 
         private void SetWindowIcon()
@@ -100,30 +102,20 @@ namespace Sorting_Algorithms
                 // 0 < array[i] < 100
                 // we have to convert that to the height of the canvas
 
+                // primary pointer
                 if (i == iPos)
-                {
-                    // primary pointer
                     colour = red;
-                }
+                // secondary pointer
                 else if (i == jPos)
-                {
-                    // secondary pointer
                     colour = blue;
-                }
+                // tertiary pointer
                 else if (i == kPos)
-                {
-                    // tertiary pointer
                     colour = green;
-                }
+                // interval between pointers
                 else if (fillGap && (i > iPos && i < jPos || i > jPos && i < iPos))
-                {
-                    // interval between pointers
-                    colour = d_blue;
-                }
+                    colour = yellow;
                 else
-                {
-                    colour = new SolidColorBrush(Color.FromArgb(255, (byte)(200 * h_proportion), (byte)(180 * h_proportion), (byte)(250 * h_proportion)));
-                }
+                    colour = new SolidColorBrush(Color.FromArgb(255, (byte)(100 + 150 * h_proportion), (byte)(75 + 175 * h_proportion), (byte)(150 + 100 * h_proportion)));
 
                 Lines[i].Stroke = colour;
                 Lines[i].ToolTip = Math.Round(array[i], 2);
@@ -164,7 +156,7 @@ namespace Sorting_Algorithms
 
         private void EnableSortButtons(bool state)
         {
-            BarCount.IsEnabled = state;
+            BarCountSlider.IsEnabled = state;
 
             BubbleGroup.IsEnabled = state;
             InsertionGroup.IsEnabled = state;
@@ -175,9 +167,9 @@ namespace Sorting_Algorithms
             CountingSortsGroup.IsEnabled = state;
             OtherSortsGroup.IsEnabled = state;
 
-            FastChkBox.IsEnabled = state;
+            FastRunChkBox.IsEnabled = state;
 
-            DataFunctionsCheckBoxes.IsEnabled = state;
+            ParametersStackPanel.IsEnabled = state;
 
             ShuffleBtn.IsEnabled = state;
             ReverseBtn.IsEnabled = state;
@@ -286,8 +278,8 @@ namespace Sorting_Algorithms
 
         private void BarCount_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            numOfElements = (int)BarCount.Value;
-            CountLbl.Content = numOfElements.ToString();
+            numOfElements = (int)BarCountSlider.Value;
+            ElementCountLbl.Content = numOfElements.ToString();
             InitialiseArray();
             UpdateBars();
         }
@@ -299,20 +291,13 @@ namespace Sorting_Algorithms
 
             array = new double[numOfElements];
 
-            if (RandomValueCheck == null)
-            {
-                AssignLinearArrayValues();
-            }
-            else
-            {
-                if ((bool)RandomValueCheck.IsChecked)
-                    AssignRandomArrayValues();
-                else if ((bool)ExpValueCheck.IsChecked)
-                    AssignExpArrayValues();
-                else if ((bool)LogValueCheck.IsChecked)
-                    AssignLogArrayValues();
-                else
+            if (DataFunctionComboBox != null) {
+                ComboBoxItem chosenComboBoxItem = (ComboBoxItem)DataFunctionComboBox.SelectedItem;
+
+                if (chosenComboBoxItem == null)
                     AssignLinearArrayValues();
+                else
+                    GenerateArrayValuesOfType(chosenComboBoxItem.Content.ToString());
             }
         }
 
@@ -401,16 +386,15 @@ namespace Sorting_Algorithms
             for (int i = 0; i < array.Length; i++)
             {
                 double val = Math.Log(i + c + 1) / max;
-
                 array[i] = minBarVal + val * (maxBarVal - minBarVal);
             }
         }
 
-        private void AssignTrigArrayValues()
+        private void AssignSinArrayValues()
         {
-            //assigns height based on cos function
+            //assigns height based on sin function
 
-            double a = 4 * Math.PI;
+            double a = 2 * Math.PI;
             double b = Math.PI / 2;
 
             for (int i = 0; i < array.Length; i++)
@@ -421,33 +405,62 @@ namespace Sorting_Algorithms
             }
         }
 
-        private void DataStyleChanged(object sender, RoutedEventArgs e)
+        private void AssignLogisticArrayValues()
+        {
+            //assigns height based on cos function
+
+            double a = Math.PI;           // multiplier
+            double b = -Math.PI;          // phase shift 
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                // -1 <= cos(x) <= 1, so add 1 to result to yield 0 <= val <= 2
+                double val = 1 + Math.Cos(a *  i / array.Length + b);
+                // then 0 <= val/2 <= 1, so we can find the proportion of the bar value in the interval
+                array[i] = minBarVal + val * (maxBarVal - minBarVal) / 2;
+            }
+        }
+
+        private void ArrayGeneratingFunction_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (array == null)
                 return;
 
-            switch (((RadioButton)sender).Content)
+            ComboBox comboBox = (ComboBox)sender;
+            ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
+
+            if (selectedItem != null)
+                GenerateArrayValuesOfType(selectedItem.Content.ToString());
+
+            DrawWithoutIndices();
+        }
+
+        public void GenerateArrayValuesOfType(string selectedType)
+        {
+            switch (selectedType)
             {
-                case "Random":
-                    AssignRandomArrayValues();
-                    break;
                 case "Logarithm":
                     AssignLogArrayValues();
                     break;
+                case "Random":
+                    AssignRandomArrayValues();
+                    break;
                 case "Exponential":
                     AssignExpArrayValues();
+                    break;
+                case "Logistic":
+                    AssignLogisticArrayValues();
+                    break;
+                case "Sinusoidal":
+                    AssignSinArrayValues();
                     break;
                 default:
                     AssignLinearArrayValues();
                     break;
             }
-
-            DrawWithoutIndices();
         }
 
         #endregion
-
-        #region Shuffle
 
         private void ShuffleBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -484,37 +497,9 @@ namespace Sorting_Algorithms
             Draw(-1, -1, -1);
         }
 
-        #endregion
-
-        private void SwapColours()
-        {
-            Brush temp = appBkg;
-            appBkg = appFrg;
-            appFrg = temp;
-
-            UpdateColourScheme();
-        }
-
-        private void UpdateColourScheme()
-        {
-            for (int i = 0; i < myCanvas.Children.Count; i++)
-            {
-                if (myCanvas.Children[i] is Button)
-                {
-                    Button b = (Button)myCanvas.Children[i];
-                    b.Background = appBkg;
-                    b.Foreground = appFrg;
-                    myCanvas.Children[i] = b;
-                }
-            }
-
-            Background = appBkg;
-            Foreground = appFrg;
-        }
-
         private void FastChkBox_Checked(object sender, RoutedEventArgs e)
         {
-            fastRun = (bool)FastChkBox.IsChecked;
+            fastRun = (bool)FastRunChkBox.IsChecked;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

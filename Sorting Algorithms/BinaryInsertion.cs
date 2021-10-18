@@ -24,6 +24,11 @@
             return -1;
         }
 
+        public override int getJ()
+        {
+            return SortJ + 1;
+        }
+
         public override double[] Run()
         {
             if (IndexToInsert != SortI)
