@@ -15,6 +15,7 @@ namespace Sorting_Algorithms
         protected bool isFinished = false;
         protected int min = 0;
         protected int max = 0;
+        protected int MODE = 0;
 
         public Sort(double[] array)
         {
@@ -27,6 +28,16 @@ namespace Sorting_Algorithms
         protected void updateArray(double[] array)
         {
             this.array = array;
+        }
+
+        public int getMin()
+        {
+            return min;
+        }
+
+        public int getMax()
+        {
+            return max;
         }
 
         public bool isArraySorted()

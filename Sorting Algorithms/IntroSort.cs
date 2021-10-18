@@ -28,7 +28,6 @@ namespace Sorting_Algorithms
         protected const int QUICK_MODE = 0;
         protected const int INSERTION_MODE = 1;
         protected const int HEAP_MODE = 2;
-        protected int MODE;
         readonly int insertionSortThreshold = 16;   // if partition is smaller, use insertion sort
 
         Queue<IntroQNode> queue = new Queue<IntroQNode>();

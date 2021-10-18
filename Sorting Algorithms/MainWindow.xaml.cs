@@ -172,6 +172,7 @@ namespace Sorting_Algorithms
             QuickSortGroup.IsEnabled = state;
             HeapSortsGroup.IsEnabled = state;
             HybridSortsGroup.IsEnabled = state;
+            CountingSortsGroup.IsEnabled = state;
             OtherSortsGroup.IsEnabled = state;
 
             FastChkBox.IsEnabled = state;
@@ -238,6 +239,9 @@ namespace Sorting_Algorithms
                     break;
                 case "Binary Intro Sort":
                     currentSort = new BinaryIntroSort(array);
+                    break;
+                case "Bucket Sort":
+                    currentSort = new BucketSort(array, minBarVal, maxBarVal);
                     break;
                 default:
                     return;

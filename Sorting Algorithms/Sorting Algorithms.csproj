@@ -77,6 +77,7 @@
     </Compile>
     <Compile Include="BinaryInsertion.cs" />
     <Compile Include="BubbleSort.cs" />
+    <Compile Include="BucketSort.cs" />
     <Compile Include="CocktailShakerSort.cs" />
     <Compile Include="CombSort.cs" />
     <Compile Include="CycleSort.cs" />

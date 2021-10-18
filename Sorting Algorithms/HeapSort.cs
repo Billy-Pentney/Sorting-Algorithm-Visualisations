@@ -14,7 +14,6 @@ namespace Sorting_Algorithms
         int root = 0;
         int swap;
         int largest;
-        int MODE = 0;
         const int CREATE_HEAP = 0;
         const int SIFT_HEAP = 1;
         const int BETWEEN_SIFTS = 2;

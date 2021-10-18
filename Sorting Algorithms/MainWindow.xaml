@@ -68,11 +68,17 @@
                     </StackPanel>
                 </GroupBox>
 
+                <GroupBox  Name="CountingSortsGroup" Header="Counting Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2">
+                    <StackPanel Margin="2">
+                        <Button Name="BucketSort" Content="Bucket Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Bucket Sort with recursive sub-calls to Bucket/Insertion Sort"></Button>
+                    </StackPanel>
+                </GroupBox>
+
                 <GroupBox Name="OtherSortsGroup" Header="Other Sorts" Margin="10" FontStyle="Italic" BorderBrush="Gray" BorderThickness="2">
                     <StackPanel Margin="2">
-                        <Button Name="MergeBtn" Content="Merge Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Merge Sort"></Button>
-                        <Button Name="CycleBtn" Content="Cycle Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Cycle Sort"></Button>
-                        <Button Name="PatienceSort" Content="Patience Sort" Margin="2" Canvas.Top="210" Height="25" Click="SortButton_Click" ToolTip="Patience Sort without Priority Queue"></Button>
+                        <Button Name="MergeBtn" Content="Merge Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Merge Sort"></Button>
+                        <Button Name="CycleBtn" Content="Cycle Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Cycle Sort"></Button>
+                        <Button Name="PatienceSort" Content="Patience Sort" Margin="2" Height="25" Click="SortButton_Click" ToolTip="Patience Sort without Priority Queue"></Button>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
