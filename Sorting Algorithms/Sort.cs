@@ -17,6 +17,22 @@ namespace Sorting_Algorithms
         protected int max = 0;
         protected int MODE = 0;
 
+        public const string O_of_N_CUBED = "O(n\x00B3)";
+        public const string O_of_N_SQUARED = "O(n\x00B2)";
+        public const string O_of_N = "O(n)";
+        public const string O_of_N_factorial = "O(n!)";
+        public const string O_of_k = "O(k)";
+        public const string O_of_1 = "O(1)";
+        public const string O_of_INFINITY = "O(\x221E)";
+        public const string O_of_N_log_N = "O(n*logn)";
+
+
+        public string sortName { get; set; } = "No sort selected";
+        public string sortDescription { get; set; } = "";
+        public string bestCase { get; set; } = "";
+        public string worstCase { get; set; } = "";
+        public string avgCase { get; set; } = "";
+
         public Sort(double[] array)
         {
             this.array = array;
@@ -46,8 +62,7 @@ namespace Sorting_Algorithms
 
             for (int i = min; i < max; i++)
             {
-                comparisonCount++;
-                if (array[i] > array[i + 1])
+                if (Compare(i, i+1) > 0)
                     return false;
             }
             return true;

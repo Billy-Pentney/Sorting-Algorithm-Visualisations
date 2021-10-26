@@ -75,6 +75,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BozoSort.cs" />
+    <Compile Include="SlowSort.cs" />
+    <Compile Include="StoogeSort.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -90,7 +93,7 @@
     <Compile Include="CombSort.cs" />
     <Compile Include="CycleSort.cs" />
     <Compile Include="DoubleSelectionSort.cs" />
-    <Compile Include="HeapSort.cs" />
+    <Compile Include="MaxHeapSort.cs" />
     <Compile Include="InsertionSort.cs" />
     <Compile Include="IntroSort.cs" />
     <Compile Include="MergeSort.cs" />

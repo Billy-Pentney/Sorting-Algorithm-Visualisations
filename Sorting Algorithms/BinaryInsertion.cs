@@ -6,6 +6,8 @@
 
         public BinaryInsertion(double[] array) : base(array)
         {
+            sortName = "Binary Insertion Sort";
+            sortDescription = "Insertion Sort using a binary search to position each element (reduced comparisons).";
         }
 
         public override void setBounds(int min, int max)

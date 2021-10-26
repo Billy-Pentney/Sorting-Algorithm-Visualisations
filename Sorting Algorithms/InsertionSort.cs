@@ -2,9 +2,15 @@
 {
     class InsertionSort : Sort
     {
+
         public InsertionSort(double[] array) : base(array)
         {
             fillGapWithColour = true;
+            sortName = "Insertion Sort";
+            sortDescription = "Insertion Sort builds a sorted region by swapping each element backwards until it is in the correct position in the sorted region.";
+            bestCase = O_of_N;
+            avgCase = O_of_N_SQUARED;
+            worstCase = O_of_N_SQUARED;
         }
 
         public override void setBounds(int min, int max)

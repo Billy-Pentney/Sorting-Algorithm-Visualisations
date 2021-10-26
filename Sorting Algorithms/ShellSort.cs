@@ -6,14 +6,20 @@
 
         public ShellSort(double[] array) : base(array)
         {
+            sortName = "Shell Sort";
+            sortDescription = "Shell Sort performs insertion sorts with a decreasing gap between compared elements.";
+            worstCase = "O(n^1.5)";
+            bestCase = O_of_N_log_N;
+            avgCase = O_of_N_log_N;
+
             fillGapWithColour = true;
             gap = 1;
             while (gap <= max / 2)
             {
-                //gap = gap * 3 + 1;
-                gap = (gap + 1) * 2 - 1;
+                gap = CalculateGap();
             }
         }
+
         public override double[] Run()
         {
             if (SortJ - gap >= min && SortJ <= max)
@@ -34,11 +40,8 @@
             }
             else if (gap > 1)
             {
-                // gap /= 2;
-                //gapShell = (gap - 1) / 3;
 
-                //2^k - 1, starting at 1
-                gap = (gap + 1) / 2 - 1;
+                gap = CalculateGap();
                 SortI = min + gap;
                 SortJ = SortI;
             }
@@ -49,6 +52,12 @@
 
             comparisonCount++;
             return array;
+        }
+
+        private int CalculateGap()
+        {
+            // Hibbard intervals
+            return (gap + 1) * 2 + 1;
         }
 
         public override double[] QuickRun()

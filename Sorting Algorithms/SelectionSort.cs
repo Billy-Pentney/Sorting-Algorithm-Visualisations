@@ -6,6 +6,12 @@
 
         public SelectionSort(double[] array) : base(array)
         {
+            sortName = "Selection Sort";
+            sortDescription = "Selection Sort builds a sorted region by means of linear passes to identify the minimum unsorted element.";
+            bestCase = O_of_N_SQUARED;
+            avgCase = O_of_N_SQUARED;
+            worstCase = O_of_N_SQUARED;
+
             SortI = min;
             indexOfMin = SortI;
             SortJ = indexOfMin + 1;

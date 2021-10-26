@@ -7,6 +7,27 @@
         public CocktailShakerSort(double[] array) : base(array)
         {
             this.gap = 1;
+            sortName = "Cocktail Shaker Sort";
+            sortDescription = "Cocktail Shaker sort performs bubble sort up/down the list in alternation.";
+            bestCase = O_of_N;
+            worstCase = O_of_N_SQUARED;
+            avgCase = O_of_N_SQUARED;
+        }
+
+        public override int getI()
+        {
+            if (gap > 0)
+                return SortI;
+            else
+                return SortJ;
+        }
+
+        public override int getJ()
+        {
+            if (gap > 0)
+                return SortJ;
+            else
+                return SortI;
         }
 
         public override double[] Run()
@@ -51,8 +72,6 @@
                     Swap(SortJ, SortJ + gap);
                     swappedThisCycle = true;
                 }
-
-                comparisonCount++;
             }
 
             gap = -gap;

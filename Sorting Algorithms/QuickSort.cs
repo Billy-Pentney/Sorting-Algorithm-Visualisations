@@ -12,6 +12,8 @@ namespace Sorting_Algorithms
 
         public QuickSort(double[] array) : base(array)
         {
+            sortName = "Quick Sort";
+
             if (!isArraySorted())
             {
                 queuedRegions.Push(new int[] { 0, array.Length - 1 });
@@ -54,6 +56,10 @@ namespace Sorting_Algorithms
 
         public HoareQuickSort(double[] array) : base(array)
         {
+            sortDescription = "Quick Sort recursively subdivides the array, using Hoare Partitioning - the pivot is the midpoint of the current region";
+            worstCase = O_of_N_log_N;
+            bestCase = O_of_N_log_N;
+            avgCase = O_of_N_log_N;
         }
 
         public override int getK()
@@ -91,8 +97,6 @@ namespace Sorting_Algorithms
                 {
                     addToQueue(SortJ + 1, regionEnd);
                     addToQueue(regionStart, SortJ);
-                    //queuedRegions.Push(new int[] { regionStart, SortJ });
-                    //queuedRegions.Push(new int[] { SortJ+1, regionEnd });
 
                     Dequeue();
                 }
@@ -143,6 +147,10 @@ namespace Sorting_Algorithms
     {
         public LomutoQuickSort(double[] array) : base(array)
         {
+            sortDescription = "Quick Sort recursively subdivides the array, using Lomuto partitioning - the pivot is the end of the region";
+            worstCase = O_of_N_SQUARED;
+            bestCase = O_of_N_log_N;
+            avgCase = O_of_N_log_N;
         }
 
         public override double[] Run()
@@ -247,6 +255,10 @@ namespace Sorting_Algorithms
     {
         public LomutoMedianQuickSort(double[] array) : base(array)
         {
+            sortDescription = "Quick Sort recursively subdivides the array, using Lomuto Median partitioning - the pivot is the median of the region";
+            worstCase = O_of_N_log_N;
+            bestCase = O_of_N_log_N;
+            avgCase = O_of_N_log_N;
         }
 
         protected override void Dequeue()

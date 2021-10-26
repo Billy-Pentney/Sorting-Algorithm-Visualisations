@@ -19,6 +19,12 @@ namespace Sorting_Algorithms
 
         public MergeSort(double[] array) : base(array)
         {
+            sortName = "Merge Sort";
+            sortDescription = "Merge Sort breaks the array into single elements, then merges each pair of elements into a sorted pair, merges each pair into a sorted four,... until the list is fully merged.";
+            bestCase = O_of_N_log_N;
+            worstCase = O_of_N_log_N;
+            avgCase = O_of_N_log_N;
+
             newArr = new double[array.Length];
 
             queue.Enqueue(new int[] { 0 });

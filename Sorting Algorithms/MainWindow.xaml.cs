@@ -10,6 +10,7 @@ namespace Sorting_Algorithms
 {
     public partial class MainWindow : Window
     {
+        // specific colours used for displaying/highlighting bars
         SolidColorBrush red = new SolidColorBrush(Color.FromRgb(255, 100, 100));
         SolidColorBrush yellow = new SolidColorBrush(Color.FromRgb(255, 255, 175));
         SolidColorBrush green = new SolidColorBrush(Color.FromRgb(100, 255, 100));
@@ -166,6 +167,7 @@ namespace Sorting_Algorithms
             HybridSortsGroup.IsEnabled = state;
             CountingSortsGroup.IsEnabled = state;
             OtherSortsGroup.IsEnabled = state;
+            BadSortsGroup.IsEnabled = state;
 
             FastRunChkBox.IsEnabled = state;
 
@@ -179,6 +181,8 @@ namespace Sorting_Algorithms
         private void SortButton_Click(object Sender, RoutedEventArgs e)
         {
             Button btnSender = (Button)Sender;
+            SortNameLbl.Content = btnSender.Content;
+
             switch (btnSender.Content)
             {
                 case "Bubble Sort":
@@ -223,8 +227,8 @@ namespace Sorting_Algorithms
                 case "Patience Sort":
                     currentSort = new PatienceSort(array);
                     break;
-                case "Heap Sort":
-                    currentSort = new HeapSort(array);
+                case "Max Heap Sort":
+                    currentSort = new MaxHeapSort(array);
                     break;
                 case "Intro Sort":
                     currentSort = new IntroSort(array);
@@ -235,16 +239,36 @@ namespace Sorting_Algorithms
                 case "Bucket Sort":
                     currentSort = new BucketSort(array, minBarVal, maxBarVal);
                     break;
+                case "Stooge Sort":
+                    currentSort = new StoogeSort(array);
+                    break;
+                case "Slow Sort":
+                    currentSort = new SlowSort(array);
+                    break;
+                case "Bozo Sort":
+                    currentSort = new BozoSort(array);
+                    break;
                 default:
+                    SortNameLbl.Content = "No sort selected";
                     return;
             }
 
+            DisplaySortSidepanel();
             StartSort();
         }
 
         #endregion
 
         #region Labels
+
+        private void DisplaySortSidepanel()
+        {
+            SortAvgCaseLbl.Content = currentSort.avgCase;
+            SortBestCaseLbl.Content = currentSort.bestCase;
+            SortWorstCaseLbl.Content = currentSort.worstCase;
+            //SortNameLbl.Content = currentSort.sortName;
+            SortDescriptionBlk.Text = currentSort.sortDescription;
+        }
 
         private void UpdateInfoLabels(int comps, int swaps)
         {

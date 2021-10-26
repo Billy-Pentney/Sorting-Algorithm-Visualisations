@@ -6,6 +6,10 @@
 
         public DoubleSelectionSort(double[] array) : base(array)
         {
+            sortName = "Double Selection Sort";
+            sortDescription = "Double Selection performs a Selection Sort, but selects both the minimum and maximum element in each pass.";
+            // complexity remains same as default selection sort
+
             indexOfMax = max - SortI - 1;
         }
 
@@ -49,7 +53,7 @@
                 SortJ = indexOfMin + 1;
             }
             
-            isFinished = (SortI > max / 2);
+            isFinished = SortI > max / 2;
 
             return array;
         }

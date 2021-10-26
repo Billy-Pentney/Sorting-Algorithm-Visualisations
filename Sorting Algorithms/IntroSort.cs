@@ -151,7 +151,7 @@ namespace Sorting_Algorithms
 
         protected virtual void initialiseHeapSort(int start, int end)
         {
-            currentSort = new HeapSort(array);
+            currentSort = new MaxHeapSort(array);
             currentSort.setBounds(start, end);
             MODE = HEAP_MODE;
         }

@@ -2,7 +2,13 @@
 {
     class BubbleSort : Sort
     {
-        public BubbleSort(double[] array) : base(array) { }
+        public BubbleSort(double[] array) : base(array) {
+            sortName = "Bubble Sort";
+            sortDescription = "Bubble sort repeatedly steps through the list, comparing adjacent elements and swapping them if they are in the wrong order.";
+            bestCase = O_of_N;
+            worstCase = O_of_N_SQUARED;
+            avgCase = O_of_N_SQUARED;
+        }
 
         public override double[] Run()
         {
