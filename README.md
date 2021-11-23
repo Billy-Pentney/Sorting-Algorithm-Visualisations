@@ -1,5 +1,7 @@
 # Sorting-Algorithm-Visualisations
 
+![Screenshot](Screenshot.jpg)
+
 A simple WPF C# App which demonstrates a variety of common sorting algorithms used to sort a series of bars. 
 Its primary purpose is for understanding the function and relative efficiency of each sort and to help highlight the advantages and disadvantages of each algorithm.
 
